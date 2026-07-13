@@ -1,11 +1,13 @@
 export  interface Book {
     name: string,
+    id: number,
     chapters: Chapter[]
 
 }
 
 export  interface Chapter {
     chapter: number,
+    id: number,
     name: string,
     verses: Verse[]
 }
