@@ -16,5 +16,7 @@ export interface Verse {
     verse: string,
     chapter: string,
     name: string,
-    text: string
+    text: string,
+    myComments: number,
+    publicComments: number
 }

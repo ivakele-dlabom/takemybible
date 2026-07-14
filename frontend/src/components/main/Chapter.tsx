@@ -1,5 +1,5 @@
 import type {Chapter as Ch} from "../../types/kjv.ts";
-import VerseDisplay from "../files/VerseDisplay.tsx";
+import VerseDisplay from "./VerseDisplay.tsx";
 
 interface Props {
     chapter: Ch,
