@@ -1,13 +1,14 @@
 import React, {useState} from "react";
 import type {Verse} from "../../types/kjv.ts";
 import {VerseContainer} from "./VerseContainer.tsx";
+import DiscussionFeed from "./comments/DiscussionFeed.tsx";
 
 export interface VerseDisplayProps {
     verses: Verse[];
 }
 
 const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses }) => {
-    const [focusedVerse, setFocusedVerse] = useState<number>(-1)
+    const [focusedVerse, setFocusedVerse] = useState<number>(1)
     const handleSelectVerse = (e: React.MouseEvent<HTMLDivElement>) => {
         const target = e.currentTarget;
         target.scrollIntoView({
@@ -22,6 +23,7 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses }) => {
     const focusedVerseAnimationStyles = (styles: string, num: number): string => {
         if (focusedVerse>=0) {
             if (focusedVerse==num) {
+                console.log("aply")
                 return styles;
             }
         }
@@ -29,7 +31,7 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses }) => {
 
     }
     return (
-        <div className="w-[90%] mx-auto bg-white font-sans p-6 space-y-8">
+        <div className="w-[80%] mx-auto bg-white font-sans p-6 space-y-8">
             {verses.map((verse, number) => (
                 <VerseContainer key={number}>
                     <div key={number} id={number.toString()}  onClick={handleSelectVerse} className="relative mb-2 group">
@@ -45,17 +47,17 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses }) => {
                                 </p>
                             </div>
                         </div>
-                        <section className={" max-h-0 opacity-0 overflow-hidden transition-all duration-200 ease-out group-hover:max-h-60 group-hover:opacity-100" }>
+                        <section className={" max-h-0 opacity-0 overflow-hidden transition-all duration-200 ease-out group-hover:max-h-60 group-hover:opacity-100" + focusedVerseAnimationStyles(" max-h-60 opacity-100", number) }>
 
                         {/* Connector lines */}
-                        <div className={"relative display-none h-8 opacity-0 transition-all duration-500 ease-out group-hover:h-8 group-hover:opacity-100 group-hover:translate-y-0  group-hover:pointer-events-auto " + focusedVerseAnimationStyles( "translate-y-0 opacity-100 pointer-events-auto", number)}>
+                        <div className={"relative h-0 display-none opacity-0 transition-all duration-500 ease-out group-hover:h-13  group-hover:opacity-100 group-hover:translate-y-0  group-hover:pointer-events-auto " + focusedVerseAnimationStyles( "h-13 translate-y-0 opacity-100 pointer-events-auto", number)}>
                             {/* elbow line -> "You comments" (drops then curves left) */}
-                            <div className={"absolute top-0 left-2 w-6 h-0 group-hover:h-13 border-l-[1.5px] border-b-[1.5px] border-[#161616] rounded-bl-lg transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-0  group-hover:pointer-events-auto" + focusedVerseAnimationStyles( " translate-y-0 opacity-100 pointer-events-auto h-13", number) }/>
+                            <div className={"absolute top-0 left-2 w-6 h-0 group-hover:h-13 border-l-[1.5px] border-b-[1.5px] border-[#161616] rounded-bl-lg transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-0  group-hover:pointer-events-auto" + focusedVerseAnimationStyles( "  translate-y-0 opacity-100 pointer-events-auto h-13", number) }/>
                             {/* straight line -> "Public comments" */}
                             <div className={"absolute top-0 left-71 w-[1.5px] h-0 group-hover:h-11 bg-[#161616] transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-0  group-hover:pointer-events-auto " + focusedVerseAnimationStyles( " translate-y-0 opacity-100 pointer-events-auto h-11", number)} />
                         </div>
 
-                        <div className={"absolute -bottom-9 left-6 flex gap-2 z-20 opacity-0 translate-y-1 pointer-events-none transition-all duration-500 ease-out group-hover:opacity-100 hover:opacity-100 group-hover:translate-y-0 hover:translate-y-0 group-hover:pointer-events-auto hover:pointer-events-auto" + focusedVerseAnimationStyles( " translate-y-0 opacity-100 pointer-events-auto", number) }>
+                        <div className={"absolute -bottom-4 left-6 flex gap-2 z-20 opacity-0 translate-y-1 pointer-events-none transition-all duration-500 ease-out group-hover:opacity-100 hover:opacity-100 group-hover:translate-y-0 hover:translate-y-0 group-hover:pointer-events-auto hover:pointer-events-auto" + focusedVerseAnimationStyles( " translate-y-0 opacity-100 pointer-events-auto", number) }>
                             <button className="bg-white border border-black text-black text-sm font-medium  pl-3 pr-1.5 py-1 flex items-center gap-1.5 shadow-sm">
                                 You comments
                                 <span className="bg-grey text-black rounded-full px-2 py-0.5 text-[11px]">
@@ -70,10 +72,12 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses }) => {
                             </button>
                         </div>
                         </section>
-
                     </div>
+
+                    <DiscussionFeed/>
                 </VerseContainer>
             ))}
+
         </div>
     );
 };

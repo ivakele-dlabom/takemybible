@@ -1,10 +1,11 @@
 import type {ReactNode} from "react";
 
 interface Props {
-    children: ReactNode
+    children: ReactNode,
+    className?: string
 }
-export const VerseContainer = ({children}: Props) => {
+export const VerseContainer = ({className, children}: Props) => {
     return (
-        <div className={""}>{children}</div>
+        <div className={ className}>{children}</div>
     )
 }
