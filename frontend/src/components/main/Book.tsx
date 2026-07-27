@@ -38,7 +38,7 @@ export const Book = ({ className}: Props) => {
     }
     return (
         <section className={className + "flex-col p-4"}>
-            <section className={"flex flex-col gap-2"}>
+            <section className={"sticky top-0 z-20 flex flex-col gap-2 bg-white"}>
 
             <DropdownMenu>
                 <DropdownMenuTrigger render={
