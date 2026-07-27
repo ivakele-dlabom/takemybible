@@ -1,23 +1,20 @@
 import type {Chapter as Ch} from "../../types/kjv.ts";
-import {Verse} from "./Verse.tsx";
+import VerseDisplay from "./VerseDisplay.tsx";
 
 interface Props {
-    chapter: Ch
+    chapter: Ch,
+    index: number
+    id: number,
+
 }
 
 export const Chapter = ({chapter}: Props) => {
 
+
     return (
         <>
-        <h2>{chapter.name}</h2>
-            {chapter.verses.map((verse, index) => {
-                return (
-                    <span className={"flex-col "}>
-                        <p className={"text-red-600 w-fit"}>{index+1}</p>
-                        <Verse verse={verse}/>
-                    </span>
-                )
-            })}
+
+            <VerseDisplay verses={chapter.verses}/>
         </>
 
     )
