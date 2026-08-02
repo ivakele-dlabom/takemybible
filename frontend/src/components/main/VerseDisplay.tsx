@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import type {Verse} from "../../types/kjv.ts";
 import {VerseContainer} from "./VerseContainer.tsx";
-import DiscussionFeed from "./comments/DiscussionFeed.tsx";
 import CommentsFeed from "./comments/CommentsFeed.tsx";
 
 export interface VerseDisplayProps {
@@ -24,7 +23,6 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses }) => {
     const focusedVerseAnimationStyles = (styles: string, num: number): string => {
         if (focusedVerse>=0) {
             if (focusedVerse==num) {
-                console.log("aply")
                 return styles;
             }
         }
@@ -35,7 +33,7 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses }) => {
         <div className="w-[80%] mx-auto bg-white font-sans p-6 space-y-8">
             {verses.map((verse, number) => (
                 <VerseContainer key={number}>
-                    <div key={number} id={number.toString()}  onClick={handleSelectVerse} className="relative mb-2 group">
+                    <div key={number} id={number.toString()}  onClick={handleSelectVerse} className="relative mb-2 group scroll-mt-38">
                         <div
                             className={" relative bg-white rounded-xs pl-10 pr-6 py-6 cursor-pointer transform scale-100 transition-transform duration-200 ease-out hover:scale-[1.02] hover:shadow-sm hover:z-10 " + focusedVerseAnimationStyles("shadow-sm", number)}
                         >
@@ -74,7 +72,7 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses }) => {
                         </div>
                         </section>
                     </div>
-                    <CommentsFeed/>
+                <CommentsFeed className={focusedVerseAnimationStyles("h-90 bg-gray-100", number)} />
 
                 </VerseContainer>
             ))}

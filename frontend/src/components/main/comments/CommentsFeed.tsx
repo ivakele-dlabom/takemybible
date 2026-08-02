@@ -1,5 +1,8 @@
 import { User } from "lucide-react";
 import CommentCard from "./CommentCard.tsx";
+import WriteCommentField from "./WriteCommentField.tsx";
+
+
 
 interface Reply {
     id: string;
@@ -108,10 +111,17 @@ function Avatar({
 //     );
 // }
 
-export default function CommentsFeed() {
+interface Props {
+    selectedVerse?: boolean;
+    className?: string;
+
+}
+
+export default function CommentsFeed({ selectedVerse, className }: Props) {
     return (
-        <div className=" flex w-full max-w-3xl flex-col gap-4 p-6">
-            <CommentCard/>
+        <div className={" flex w-full max-w-3xl flex-col gap-4 p-6 " + (selectedVerse ? "h-60" : "") + (className ? ` ${className}` : "")}>
+            <CommentCard />
+            <WriteCommentField />
         </div>
     );
 }
