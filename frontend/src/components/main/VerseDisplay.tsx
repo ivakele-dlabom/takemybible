@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import type {Verse} from "../../types/kjv.ts";
 import {VerseContainer} from "./VerseContainer.tsx";
 import DiscussionFeed from "./comments/DiscussionFeed.tsx";
+import CommentsFeed from "./comments/CommentsFeed.tsx";
 
 export interface VerseDisplayProps {
     verses: Verse[];
@@ -73,8 +74,8 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses }) => {
                         </div>
                         </section>
                     </div>
+                    <CommentsFeed/>
 
-                    <DiscussionFeed/>
                 </VerseContainer>
             ))}
 
