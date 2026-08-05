@@ -37,7 +37,11 @@ const comment: CommentData = {
     ],
 };
 
-export default function CommentCard() {
+interface Props {
+    className?: string;
+}
+
+export default function CommentCard({ className }: Props) {
     const [liked, setLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(comment.likeCount);
     const [showReplies, setShowReplies] = useState(false);
@@ -48,7 +52,7 @@ export default function CommentCard() {
     };
 
     return (
-        <div className="w-full max-w-xl bg-white px-4 py-5 text-black">
+        <div className={className +" w-full max-w-xl bg-white px-4 py-5 text-black"}>
             <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                     <p className="font-semibold text-black w-fit">{comment.author}</p>

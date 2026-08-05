@@ -6,11 +6,14 @@ import {
 } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
 
-export function WriteCommentField() {
+interface Props {
+    className?: string
+}
+
+export default function WriteCommentField({ className }: Props) {
   return (
-    <Field>
-      <FieldLabel htmlFor="textarea-message">Message</FieldLabel>
-      <FieldDescription>Enter your message below.</FieldDescription>
+    <Field className={className}>
+      <FieldDescription>Enter your comment.</FieldDescription>
       <Textarea id="textarea-message" placeholder="Type your message here." />
     </Field>
   )

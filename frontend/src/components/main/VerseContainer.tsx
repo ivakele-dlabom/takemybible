@@ -6,6 +6,6 @@ interface Props {
 }
 export const VerseContainer = ({className, children}: Props) => {
     return (
-        <div className={ className}>{children}</div>
+      <div className={" " + className}>{children}</div>
     )
 }

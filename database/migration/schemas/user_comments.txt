@@ -1,0 +1,42 @@
+                         ┌──────────────┐
+                         │    users     │
+                         │──────────────│
+                         │ id           │
+                         │ username     │
+                         │ email        │
+                         └──────┬───────┘
+                                │
+                 ┌──────────────┴──────────────┐
+                 │                             │
+                 │ author_id                   │ user_id
+                 ▼                             ▼
+        ┌─────────────────┐           ┌──────────────────┐
+        │     posts       │           │  comment_likes   │
+        │─────────────────│           │──────────────────│
+        │ id              │           │ comment_id       │
+        │ author_id       │           │ user_id          │
+        │ title           │           └────────┬─────────┘
+        │ body            │                    │
+        └────────┬────────┘                    │
+                 │                             │
+                 │ post_id                     │
+                 ▼                             │
+        ┌─────────────────────────────┐        │
+        │          comments           │◄───────┘
+        │─────────────────────────────│
+        │ id                          │
+        │ author_id ──────────────────┼──► users
+        │ post_id ────────────────────┼──► posts
+        │ body                        │
+        │ parent_comment_id           │
+        │ like_count                  │
+        │ created_at                  │
+        │ updated_at                  │
+        │ deleted_at                  │
+        └──────────────┬──────────────┘
+                       │
+                       │ parent_comment_id
+                       │
+                       ▼
+                  comments
+                  (reply)

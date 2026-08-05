@@ -1,7 +1,5 @@
-import { User } from "lucide-react";
 import CommentCard from "./CommentCard.tsx";
 import WriteCommentField from "./WriteCommentField.tsx";
-
 
 
 interface Reply {
@@ -50,66 +48,7 @@ const comments: Comment[] = [
     },
 ];
 
-function Avatar({
-                    avatar,
-                    size = "md",
-                }: {
-    avatar: Comment["avatar"] | Reply["avatar"];
-    size?: "sm" | "md";
-}) {
-    const sizeClass = size === "sm" ? "h-8 w-8 text-xs" : "h-10 w-10 text-sm";
 
-    if (avatar.kind === "icon") {
-        return (
-            <div
-                className={`flex ${sizeClass} flex-none items-center justify-center rounded-full ${avatar.colorClass}`}
-            >
-                <User size={size === "sm" ? 16 : 18} strokeWidth={2} />
-            </div>
-        );
-    }
-
-    return (
-        <div
-            className={`flex ${sizeClass} flex-none items-center justify-center rounded-full font-semibold ${avatar.colorClass}`}
-        >
-            {avatar.initials}
-        </div>
-    );
-}
-
-// function CommentCard({ comment }: { comment: Comment }) {
-//     return (
-//         <div className="rounded-xl bg-neutral-100 px-6 py-5">
-//             <div className="flex gap-3">
-//                 <Avatar avatar={comment.avatar} />
-//                 <div className="min-w-0 flex-1">
-//           <span className="text-sm font-bold uppercase tracking-wide text-neutral-900">
-//             {comment.author}
-//           </span>
-//                     <p className="mt-1 leading-relaxed text-neutral-800">{comment.body}</p>
-//                 </div>
-//             </div>
-//
-//             {comment.replies?.map((reply) => (
-//                 <div
-//                     key={reply.id}
-//                     className="mt-4 ml-5 flex gap-3 border-l-2 border-neutral-200 pl-4"
-//                 >
-//                     <Avatar avatar={reply.avatar} size="sm" />
-//                     <div className="min-w-0 flex-1">
-//             <span className="text-sm font-semibold uppercase tracking-wide text-neutral-600">
-//               {reply.author}
-//             </span>
-//                         <p className="mt-1 italic leading-relaxed text-neutral-600">
-//                             {reply.body}
-//                         </p>
-//                     </div>
-//                 </div>
-//             ))}
-//         </div>
-//     );
-// }
 
 interface Props {
     selectedVerse?: boolean;
@@ -119,9 +58,9 @@ interface Props {
 
 export default function CommentsFeed({ selectedVerse, className }: Props) {
     return (
-        <div className={" flex w-full max-w-3xl flex-col gap-4 p-6 " + (selectedVerse ? "h-60" : "") + (className ? ` ${className}` : "")}>
-            <CommentCard />
-            <WriteCommentField />
+        <div className={" flex w-full max-w-100 flex-col gap-4 p-6 h-165"}>
+            <CommentCard className={""} />
+            <WriteCommentField className="mt-auto w-full max-h-60" />
         </div>
     );
 }
