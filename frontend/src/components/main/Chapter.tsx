@@ -1,23 +1,15 @@
-import type {Chapter as Ch} from "../../types/kjv.ts";
-import VerseDisplay from "./VerseDisplay.tsx";
-
-import CommentsFeed from "./comments/CommentsFeed.tsx";
+import VerseDisplay, { type VerseData } from "./VerseDisplay.tsx";
 
 interface Props {
-    chapter: Ch,
-    index: number
-    id: number,
-    className?: string
-
+    verses: VerseData[];
+    className?: string;
+    onVerseSelect?: (verseId: number) => void;
 }
 
-export const Chapter = ({chapter, className}: Props) => {
-
+export const Chapter = ({ verses, className, onVerseSelect }: Props) => {
     return (
         <div className={className + " flex flex-row"}>
-          <VerseDisplay className="flex-3" verses={chapter.verses} />
+            <VerseDisplay className="flex-3" verses={verses} onVerseSelect={onVerseSelect} />
         </div>
-
-    )
-
-}
+    );
+};

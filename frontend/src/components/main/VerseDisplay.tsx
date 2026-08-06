@@ -1,57 +1,65 @@
-import React, {useState} from "react";
-import type {Verse} from "../../types/kjv.ts";
-import {VerseContainer} from "./VerseContainer.tsx";
+import React, { useState } from "react";
 
-export interface VerseDisplayProps {
-    verses: Verse[];
-    className?: string;
+export interface VerseData {
+    id: number;
+    verseNumber: number;
+    text: string;
+    commentCount: number;
 }
 
-const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses, className }) => {
-    const [focusedVerse, setFocusedVerse] = useState<number>(1)
-    const handleSelectVerse = (e: React.MouseEvent<HTMLDivElement>) => {
-        const target = e.currentTarget;
-        target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-        const id = target.id;
-        setFocusedVerse(Number.parseInt(id));
-        console.log(id)
+export interface VerseDisplayProps {
+    verses: VerseData[];
+    className?: string;
+    onVerseSelect?: (verseId: number) => void;
+}
 
+const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses, className, onVerseSelect }) => {
+    const [focusedVerse, setFocusedVerse] = useState<number>(-1);
+
+    const handleSelectVerse = (index: number, verseId: number) => {
+        setFocusedVerse(index);
+        onVerseSelect?.(verseId);
     };
-    const focusedVerseAnimationStyles = (styles: string, num: number): string => {
-        if (focusedVerse>=0) {
-            if (focusedVerse==num) {
-                return styles;
-            }
-        }
-        return "";
 
-    }
+    const focusedVerseStyles = (styles: string, num: number): string => {
+        return focusedVerse === num ? styles : "";
+    };
+
     return (
         <div className={className + " flex-col w-[80%] mx-auto bg-white font-sans p-6 space-y-8"}>
-            {verses.map((verse, number) => (
-              <VerseContainer className="" key={number}>
-                <div key={number} id={number.toString()}  onClick={handleSelectVerse} className="relative mb-2 group scroll-mt-38">
-                  <div
-                    className={" relative bg-white rounded-xs pl-10 pr-6 py-6 cursor-pointer transform scale-100 transition-transform duration-200 ease-out hover:scale-[1.02] hover:shadow-sm hover:z-10 " + focusedVerseAnimationStyles("shadow-sm", number)}
-                  >
-                    <span className="absolute top-6 left-3.5 text-sm font-semibold text-[#d43b3b] leading-none">
-                      {number + 1}
-                    </span>
-                    <div className="border-none px-6 py-4">
-                      <p className="m-0 text-2xl sm:text-[1.7rem] font-bold leading-snug text-[#161616]">
-                        {verse.text}
-                      </p>
-                    </div>
+            {verses.map((verse, index) => (
+                <div className="" key={verse.id}>
+                    <div
+                        id={index.toString()}
+                        onClick={(e) => {
+                            e.currentTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+                            handleSelectVerse(index, verse.id);
+                        }}
+                        className="relative mb-2 group scroll-mt-38"
+                    >
+                        <div
+                            className={
+                                "relative bg-white rounded-xs pl-10 pr-6 py-6 cursor-pointer transform scale-100 transition-transform duration-200 ease-out hover:scale-[1.02] hover:shadow-sm hover:z-10 " +
+                                focusedVerseStyles("shadow-sm ring-1 ring-neutral-200", index)
+                            }
+                        >
+                            <span className="absolute top-6 left-3.5 text-sm font-semibold text-[#d43b3b] leading-none">
+                                {verse.verseNumber}
+                            </span>
+                            <div className="border-none px-6 py-4">
+                                <p className="m-0 text-2xl sm:text-[1.7rem] font-bold leading-snug text-[#161616]">
+                                    {verse.text}
+                                </p>
+                            </div>
+                            {verse.commentCount > 0 && (
+                                <span className="absolute top-6 right-4 text-xs text-neutral-400">
+                                    {verse.commentCount} {verse.commentCount === 1 ? "comment" : "comments"}
+                                </span>
+                            )}
                         </div>
                     </div>
-
-
-                </VerseContainer>
+                </div>
             ))}
-
         </div>
     );
 };

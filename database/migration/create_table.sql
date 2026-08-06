@@ -21,6 +21,70 @@ CREATE TABLE users (
 
 
 -- ============================================
+-- BIBLE BOOKS
+-- ============================================
+
+CREATE TABLE bible_books (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    name VARCHAR(100) NOT NULL,
+    abbreviation VARCHAR(10) NOT NULL,
+    testament ENUM('OT', 'NT') NOT NULL,
+    position INT UNSIGNED NOT NULL,
+
+    PRIMARY KEY (id),
+
+    UNIQUE KEY uk_bible_books_name (name),
+    UNIQUE KEY uk_bible_books_position (position)
+);
+
+
+-- ============================================
+-- BIBLE CHAPTERS
+-- ============================================
+
+CREATE TABLE bible_chapters (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    book_id BIGINT UNSIGNED NOT NULL,
+    chapter_number INT UNSIGNED NOT NULL,
+
+    PRIMARY KEY (id),
+
+    UNIQUE KEY uk_chapters_book_number (book_id, chapter_number),
+    INDEX idx_chapters_book (book_id),
+
+    CONSTRAINT fk_chapters_book
+        FOREIGN KEY (book_id)
+        REFERENCES bible_books(id)
+        ON DELETE CASCADE
+);
+
+
+-- ============================================
+-- BIBLE VERSES
+-- ============================================
+
+CREATE TABLE bible_verses (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    chapter_id BIGINT UNSIGNED NOT NULL,
+    verse_number INT UNSIGNED NOT NULL,
+    text TEXT NOT NULL,
+
+    PRIMARY KEY (id),
+
+    UNIQUE KEY uk_verses_chapter_number (chapter_id, verse_number),
+    INDEX idx_verses_chapter (chapter_id),
+
+    CONSTRAINT fk_verses_chapter
+        FOREIGN KEY (chapter_id)
+        REFERENCES bible_chapters(id)
+        ON DELETE CASCADE
+);
+
+
+-- ============================================
 -- POSTS
 -- ============================================
 
@@ -58,7 +122,7 @@ CREATE TABLE comments (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
     author_id BIGINT UNSIGNED NOT NULL,
-    post_id BIGINT UNSIGNED NOT NULL,
+    verse_id BIGINT UNSIGNED NOT NULL,
 
     body TEXT NOT NULL,
 
@@ -78,14 +142,14 @@ CREATE TABLE comments (
 
     PRIMARY KEY (id),
 
-    INDEX idx_comments_post (post_id),
+    INDEX idx_comments_verse (verse_id),
     INDEX idx_comments_author (author_id),
     INDEX idx_comments_parent (parent_comment_id),
-    INDEX idx_comments_post_created (post_id, created_at),
+    INDEX idx_comments_verse_created (verse_id, created_at),
 
-    CONSTRAINT fk_comments_post
-        FOREIGN KEY (post_id)
-        REFERENCES posts(id)
+    CONSTRAINT fk_comments_verse
+        FOREIGN KEY (verse_id)
+        REFERENCES bible_verses(id)
         ON DELETE CASCADE,
 
     CONSTRAINT fk_comments_author
