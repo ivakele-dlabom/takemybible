@@ -39,15 +39,15 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses, className, onVerseS
                     >
                         <div
                             className={
-                                "relative bg-white rounded-xs pl-10 pr-6 py-6 cursor-pointer transform scale-100 transition-transform duration-200 ease-out hover:scale-[1.02] hover:shadow-sm hover:z-10 " +
-                                focusedVerseStyles("shadow-sm ring-1 ring-neutral-200", index)
+                                "relative bg-white rounded-xs text-left cursor-pointer transform scale-100 transition-transform duration-200 ease-out hover:scale-[1.02]  hover:z-10 " +
+                                focusedVerseStyles(" ring-1 ring-neutral-200", index)
                             }
                         >
-                            <span className="absolute top-6 left-3.5 text-sm font-semibold text-[#d43b3b] leading-none">
+                            <span className="absolute left-0 text-sm font-semibold text-[#d43b3b] leading-none">
                                 {verse.verseNumber}
                             </span>
-                            <div className="border-none px-6 py-4">
-                                <p className="m-0 text-2xl sm:text-[1.7rem] font-bold leading-snug text-[#161616]">
+                            <div className="border-none ">
+                                <p className="m-0 pl-4 text-lg sm:text-[1.7rem] font-medium leading-snug text-[#161616]">
                                     {verse.text}
                                 </p>
                             </div>

@@ -76,7 +76,7 @@ export const Book = ({ className }: Props) => {
     };
 
     return (
-        <section className={className + "flex-col mt-4"}>
+        <section className={className + " flex-col mt-4"}>
             <section className={"sticky top-0 z-20 flex flex-col gap-2 bg-white"}>
                 <DropdownMenu>
                     <DropdownMenuTrigger render={
@@ -119,13 +119,13 @@ export const Book = ({ className }: Props) => {
                     </div>
                 ) : (
                     <Chapter
-                        className="h-164 overflow-y-auto scrollbar-thin scrollbar-w-6 scrollbar-thumb-emerald-500 scrollbar-track-gray-100"
+                        className="h-164 overflow-y-auto [&::-webkit-scrollbar]:h-[6px] [&::-webkit-scrollbar]:w-[2px] [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-400 "
                         verses={verses}
                         onVerseSelect={setSelectedVerseId}
                     />
                 )}
 
-                <CommentsFeed className="" verseId={selectedVerseId} />
+                <CommentsFeed className="hidden" verseId={selectedVerseId} />
             </section>
         </section>
     );

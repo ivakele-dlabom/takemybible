@@ -9,7 +9,7 @@ interface Props {
 export const Chapter = ({ verses, className, onVerseSelect }: Props) => {
     return (
         <div className={className + " flex flex-row"}>
-            <VerseDisplay className="flex-3" verses={verses} onVerseSelect={onVerseSelect} />
+            <VerseDisplay className="mt-4 flex-3" verses={verses} onVerseSelect={onVerseSelect} />
         </div>
     );
 };

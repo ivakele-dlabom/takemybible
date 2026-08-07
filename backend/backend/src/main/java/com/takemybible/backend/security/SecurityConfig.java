@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/bible/**").permitAll()
+                        .requestMatchers("/api/kjv/**").permitAll()
                         .requestMatchers("/api/comments/verse/**").permitAll()
                         .anyRequest().authenticated()
                 )
