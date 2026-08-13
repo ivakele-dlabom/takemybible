@@ -2,7 +2,11 @@ import React, {createContext, useContext, useState, useCallback, type ReactNode}
 import type {Book} from "../types/kjv.ts";
 import {getBookData} from "../utils/kjv.ts";
 
+export type Version = "KJV" | "NIV";
+
+
 interface BookNavigationState {
+  version: string,
   bookNumber: number;
   chapterNumber: number;
   books: Book[]
@@ -16,9 +20,12 @@ interface BookNavigationContextValue extends BookNavigationState {
   nextBook: () => void;
   previousBook: () => void;
   reset: () => void;
+  version: string,
+  setVersion: (version: string) => void;
 }
 
 const DEFAULT_STATE: BookNavigationState = {
+  version: "KJV",
   bookNumber: 0,
   chapterNumber: 1,
   books: []
@@ -30,16 +37,20 @@ interface BookNavigationProviderProps {
   children: ReactNode;
   initialBook?: number;
   initialChapter?: number;
+  initialVersion?: Version
 }
 
 export const BookNavigationProvider: React.FC<BookNavigationProviderProps> = ({
   children,
   initialBook = DEFAULT_STATE.bookNumber,
   initialChapter = DEFAULT_STATE.chapterNumber,
+    initialVersion = DEFAULT_STATE.version
+
 }) => {
   const [bookNumber, setBookNumberState] = useState<number>(initialBook);
   const [chapterNumber, setChapterNumberState] = useState<number>(initialChapter);
-  const books = getBookData();
+  const [version, setVersion] = useState<string>(initialVersion);
+  const books = getBookData(); // Gets it from storage
 
 
   const setBookNumber = useCallback((book: number) => {
@@ -71,6 +82,7 @@ export const BookNavigationProvider: React.FC<BookNavigationProviderProps> = ({
   const reset = useCallback(() => {
     setBookNumberState(initialBook);
     setChapterNumberState(initialChapter);
+    setVersion(initialVersion)
   }, [initialBook, initialChapter]);
 
   const value: BookNavigationContextValue = {
@@ -84,6 +96,8 @@ export const BookNavigationProvider: React.FC<BookNavigationProviderProps> = ({
     nextBook,
     previousBook,
     reset,
+    version,
+    setVersion,
   };
 
   return (
