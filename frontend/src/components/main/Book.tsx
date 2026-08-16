@@ -10,29 +10,22 @@ import {
 import { Button } from "../ui/button.tsx";
 import { ChevronDown } from "lucide-react";
 import CommentsFeed from "@/components/main/comments/CommentsFeed.tsx";
-import type { VerseData } from "./VerseDisplay.tsx";
+import { useBooks } from "@/hooks/useBooks.ts";
 
-interface KjvBook {
-    id: number;
-    name: string;
-    chapters: KjvChapter[];
-}
 
-interface KjvChapter {
-    chapter: number;
-    verses: VerseData[];
-}
 
 interface Props {
     className?: string;
 }
 
-export const Book = ({ className }: Props) => {
-    const [books, setBooks] = useState<KjvBook[]>([]);
+export const BookDisplay = ({ className }: Props) => {
+    const { data: books, isLoading, isError, error } = useBooks();
     const [bookIndex, setBookIndex] = useState(0);
     const [chapterIndex, setChapterIndex] = useState(0);
     const [selectedVerseId, setSelectedVerseId] = useState<number | null>(null);
-    const [loading, setLoading] = useState(true);
+  if (!books) {
+    return;
+    }
 
 
 
@@ -50,7 +43,7 @@ export const Book = ({ className }: Props) => {
         setSelectedVerseId(null);
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <section className={className + " flex items-center justify-center min-h-screen"}>
                 <p className="text-neutral-400">Loading books...</p>
@@ -67,7 +60,7 @@ export const Book = ({ className }: Props) => {
     }
 
     const currentBook = books[bookIndex];
-    const currentChapter = currentBook.chapters[chapterIndex];
+    const currentChapter = currentBook?.chapters[chapterIndex];
     const verses = currentChapter?.verses ?? [];
 
     return (
@@ -76,7 +69,7 @@ export const Book = ({ className }: Props) => {
                 <DropdownMenu>
                     <DropdownMenuTrigger render={
                         <Button variant="outline" className="h-12 flex-row font-bold text-4xl">
-                            <span className="pb-3 pl-6 pr-3 fill-gray-500">{currentBook.name}</span>
+                            <span className="pb-3 pl-6 pr-3 fill-gray-500">{currentBook?.name}</span>
                             <ChevronDown className="size-6" />
                         </Button>} />
                     <DropdownMenuContent className="w-55 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 overflow-y-auto h-60" align="start">
