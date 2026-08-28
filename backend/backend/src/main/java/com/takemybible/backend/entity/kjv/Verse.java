@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Verse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(columnDefinition = "TEXT")
     private String text;
@@ -20,11 +20,11 @@ public class Verse {
 
     private int verse;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

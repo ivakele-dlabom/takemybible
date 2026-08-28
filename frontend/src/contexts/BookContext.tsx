@@ -5,14 +5,14 @@ import {getBookData} from "../utils/kjv.ts";
 export type Version = "KJV" | "NIV";
 
 
-interface BookNavigationState {
-  version: string,
+interface BookNavigationType {
+  translation: string,
   bookNumber: number;
   chapterNumber: number;
   books: Book[]
 }
 
-interface BookNavigationContextValue extends BookNavigationState {
+interface Value extends BookNavigationType {
   setBookNumber: (book: number) => void;
   setChapterNumber: (chapter: number) => void;
   nextChapter: () => void;
@@ -20,72 +20,62 @@ interface BookNavigationContextValue extends BookNavigationState {
   nextBook: () => void;
   previousBook: () => void;
   reset: () => void;
-  version: string,
-  setVersion: (version: string) => void;
+  setTranslation: (translation: string) => void;
 }
 
-const DEFAULT_STATE: BookNavigationState = {
-  version: "KJV",
-  bookNumber: 0,
+const DEFAULT_STATE: BookNavigationType = {
+  translation: "KJV",
+  bookNumber: 1,
   chapterNumber: 1,
   books: []
 };
 
-const BookNavigationContext = createContext<BookNavigationContextValue | undefined>(undefined);
+const BookNavigationContext = createContext<Value | undefined>(undefined);
 
-interface BookNavigationProviderProps {
+interface Props {
   children: ReactNode;
   initialBook?: number;
   initialChapter?: number;
-  initialVersion?: Version
+  initialTranslation?: Version
 }
 
-export const BookNavigationProvider: React.FC<BookNavigationProviderProps> = ({
+export const BookNavigationProvider: React.FC<Props> = ({
   children,
   initialBook = DEFAULT_STATE.bookNumber,
   initialChapter = DEFAULT_STATE.chapterNumber,
-    initialVersion = DEFAULT_STATE.version
-
+  initialTranslation = DEFAULT_STATE.translation
 }) => {
-  const [bookNumber, setBookNumberState] = useState<number>(initialBook);
-  const [chapterNumber, setChapterNumberState] = useState<number>(initialChapter);
-  const [version, setVersion] = useState<string>(initialVersion);
-  const books = getBookData(); // Gets it from storage
-
-
-  const setBookNumber = useCallback((book: number) => {
-    setBookNumberState(book);
-  }, []);
-
-  const setChapterNumber = useCallback((chapter: number) => {
-    setChapterNumberState(chapter);
-  }, []);
+  const [bookNumber, setBookNumber] = useState<number>(initialBook);
+  const [chapterNumber, setChapterNumber] = useState<number>(initialChapter);
+  const [translation, setTranslation] = useState<string>(initialTranslation);
+  const books: Book[] = []; // Gets it from storage
 
   const nextChapter = useCallback(() => {
-    setChapterNumberState((prev) => prev + 1);
+    setChapterNumber((prev) => prev + 1);
   }, []);
 
   const previousChapter = useCallback(() => {
-    setChapterNumberState((prev) => Math.max(1, prev - 1));
+    setChapterNumber((prev) => Math.max(1, prev - 1));
   }, []);
 
   const nextBook = useCallback(() => {
-    setBookNumberState((prev) => prev + 1);
-    setChapterNumberState(1);
+    //
+    setBookNumber((prev) => prev + 1);
+    setChapterNumber(1);
   }, []);
 
   const previousBook = useCallback(() => {
-    setBookNumberState((prev) => Math.max(1, prev - 1));
-    setChapterNumberState(1);
+    setBookNumber((prev) => Math.max(1, prev - 1));
+    setChapterNumber(1);
   }, []);
 
   const reset = useCallback(() => {
-    setBookNumberState(initialBook);
-    setChapterNumberState(initialChapter);
-    setVersion(initialVersion)
-  }, [initialBook, initialChapter]);
+    setBookNumber(initialBook);
+    setChapterNumber(initialChapter);
+    setTranslation(initialTranslation);
+  }, [initialBook, initialChapter, initialTranslation]);
 
-  const value: BookNavigationContextValue = {
+  const value: Value = {
     books,
     bookNumber,
     chapterNumber,
@@ -96,8 +86,8 @@ export const BookNavigationProvider: React.FC<BookNavigationProviderProps> = ({
     nextBook,
     previousBook,
     reset,
-    version,
-    setVersion,
+    translation,
+    setTranslation,
   };
 
   return (
@@ -107,7 +97,7 @@ export const BookNavigationProvider: React.FC<BookNavigationProviderProps> = ({
   );
 };
 
-export const useBookNavigation = (): BookNavigationContextValue => {
+export const useBookNavigation = (): Value => {
   const context = useContext(BookNavigationContext);
   if (context === undefined) {
     throw new Error("useBookNavigation must be used within a BookProgressProvider");

@@ -1,10 +1,19 @@
-import type { Book } from "@/types/main";
+import type { Book, Verse } from "@/types/main";
 
+export async function fetchBooks(translation: string): Promise<Book[]> {
+  const res = await fetch(`http://localhost:9090/api/${translation.toLowerCase()}/books`, { method: "GET" });
 
-export async function fetchBooks(version: string): Promise<Book[]> {
-  const res = await fetch(`/api/book/${version}`);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch books: ${res.status}`);
+  if (res.ok) {
+
+    const data = await res.json();
+    console.log("res", data);
+
+    return data.map((book: { id: number; name: string }) => ({
+      id: book.id,
+      name: book.name,
+      chapters: [],
+    }));
   }
-  return res.json();
+
+  throw new Error(`Failed to fetch books: ${res.status}`);
 }

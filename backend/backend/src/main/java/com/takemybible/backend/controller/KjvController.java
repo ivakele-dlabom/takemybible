@@ -36,7 +36,7 @@ public class KjvController {
      * Returns a single book by ID.
      */
     @GetMapping("/books/{bookId}")
-    public ResponseEntity<Book> getBook(@PathVariable Long bookId) {
+    public ResponseEntity<Book> getBook(@PathVariable Integer bookId) {
         return kjvRepository.findById(bookId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -46,7 +46,7 @@ public class KjvController {
      * Returns all chapters for a given book (as a list of chapter numbers).
      */
     @GetMapping("/books/{bookId}/chapters")
-    public ResponseEntity<List<Integer>> getChapters(@PathVariable Long bookId) {
+    public ResponseEntity<List<Integer>> getChapters(@PathVariable Integer bookId) {
         if (kjvRepository.findById(bookId).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -66,7 +66,7 @@ public class KjvController {
      */
     @GetMapping("/books/{bookId}/chapters/{chapter}/verses")
     public ResponseEntity<List<Map<String, Object>>> getVerses(
-            @PathVariable Long bookId,
+            @PathVariable Integer bookId,
             @PathVariable int chapter) {
 
         if (kjvRepository.findById(bookId).isEmpty()) {
@@ -84,4 +84,16 @@ public class KjvController {
 
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Returns the count of distinct chapters for a given book.
+     */
+     @GetMapping("/books/{bookId}/chapters/count")
+     public ResponseEntity<Map<String, Long>> getChapterCount(@PathVariable Integer bookId) {
+         long chapterCount = kjvRepository.countDistinctChaptersByBookIdNative(bookId);
+         if (chapterCount == 0) {
+             return ResponseEntity.notFound().build();
+         }
+         return ResponseEntity.ok(Map.of("count", chapterCount));
+     }
 }

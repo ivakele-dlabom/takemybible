@@ -4,9 +4,9 @@ import {useBookNavigation} from "@/contexts/BookContext.tsx";
 import { bookKeys } from "../api/queryKeys";
 
 export function useBooks() {
-  const { version } = useBookNavigation();
+  const { translation } = useBookNavigation();
   return useQuery({
-    queryKey: bookKeys.byVersion(version),
-    queryFn: () => fetchBooks(version),
+    queryKey: bookKeys.byTranslation(translation),
+    queryFn: () => fetchBooks(translation),
   });
 }

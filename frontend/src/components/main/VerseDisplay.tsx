@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import type { Verse } from "@/types/main";
+
 
 export interface VerseData {
     id: number;
@@ -8,7 +10,7 @@ export interface VerseData {
 }
 
 export interface VerseDisplayProps {
-    verses: VerseData[];
+    verses: Verse[];
     className?: string;
     onVerseSelect?: (verseId: number) => void;
 }
@@ -44,18 +46,18 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ verses, className, onVerseS
                             }
                         >
                             <span className="absolute left-0 text-sm font-semibold text-[#d43b3b] leading-none">
-                                {verse.verseNumber}
+                                {verse.id}
                             </span>
                             <div className="border-none ">
                                 <p className="m-0 pl-4 text-lg sm:text-[1.7rem] font-medium leading-snug text-[#161616]">
                                     {verse.text}
                                 </p>
                             </div>
-                            {verse.commentCount > 0 && (
+                            {/*{verse.commentCount > 0 && (
                                 <span className="absolute top-6 right-4 text-xs text-neutral-400">
                                     {verse.commentCount} {verse.commentCount === 1 ? "comment" : "comments"}
                                 </span>
-                            )}
+                            )}*/}
                         </div>
                     </div>
                 </div>
