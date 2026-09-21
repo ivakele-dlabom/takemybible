@@ -10,19 +10,17 @@ export interface Verse {
 export interface Book {
   id: number;
   name: string;
-
-
 }
 
 export interface CrossReference {
   id: number;
-  from_book: string;
-  from_chapter: number;
-  from_verse: number;
-  to_book: string;
-  to_chapter: number;
-  to_verse_start: number;
-  to_verse_end: number;
+  fromBook: string;
+  fromChapter: number;
+  fromVerse: number;
+  toBook: string;
+  toChapter: number;
+  toVerseStart: number;
+  toVerseEnd: number;
   votes: number;
-  to_verse: number;
+  toVerse: number;
 }

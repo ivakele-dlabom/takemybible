@@ -5,6 +5,7 @@ import { BookNavigationProvider } from "./contexts/BookContext.tsx";
 import { AuthProvider, useAuth } from "./contexts/AuthContext.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
+import {VerseSelectionProvider} from "@/contexts/VerseSelectionContext.tsx";
 
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -38,7 +39,9 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+          <VerseSelectionProvider>
+              <AppRoutes />
+          </VerseSelectionProvider>
       </AuthProvider>
     </BrowserRouter>
   );

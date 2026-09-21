@@ -5,28 +5,65 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "cross_references")
 public class CrossReference {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "from_book")
+    @Column(name = "from_book")
     private String fromBook;
-    @JoinColumn(name = "to_book")
+
+    @Column(name = "to_book")
     private String toBook;
-    @JoinColumn(name = "from_chapter")
+
+    @Column(name = "from_chapter")
     private Integer fromChapter;
-    @JoinColumn(name = "to_chapter")
+
+    @Column(name = "to_chapter")
     private Integer toChapter;
-    @JoinColumn(name = "from_verse")
+
+    @Column(name = "from_verse")
     private Integer fromVerse;
-    @JoinColumn(name = "to_verse")
+
+    @Column(name = "to_verse")
     private Integer toVerse;
-    @JoinColumn(name = "to_verse_start")
+
+    @Column(name = "to_verse_start")
     private Integer toVerseStart;
-    @JoinColumn(name = "to_verse_end")
+
+    @Column(name = "to_verse_end")
     private Integer toVerseEnd;
-    @JoinColumn(name = "votes")
+
+    @Column(name = "votes")
     private Integer votes;
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
+    public String getFromBook() { return fromBook; }
+    public void setFromBook(String fromBook) { this.fromBook = fromBook; }
+
+    public String getToBook() { return toBook; }
+    public void setToBook(String toBook) { this.toBook = toBook; }
+
+    public Integer getFromChapter() { return fromChapter; }
+    public void setFromChapter(Integer fromChapter) { this.fromChapter = fromChapter; }
+
+    public Integer getToChapter() { return toChapter; }
+    public void setToChapter(Integer toChapter) { this.toChapter = toChapter; }
+
+    public Integer getFromVerse() { return fromVerse; }
+    public void setFromVerse(Integer fromVerse) { this.fromVerse = fromVerse; }
+
+    public Integer getToVerse() { return toVerse; }
+    public void setToVerse(Integer toVerse) { this.toVerse = toVerse; }
+
+    public Integer getToVerseStart() { return toVerseStart; }
+    public void setToVerseStart(Integer toVerseStart) { this.toVerseStart = toVerseStart; }
+
+    public Integer getToVerseEnd() { return toVerseEnd; }
+    public void setToVerseEnd(Integer toVerseEnd) { this.toVerseEnd = toVerseEnd; }
+
+    public Integer getVotes() { return votes; }
+    public void setVotes(Integer votes) { this.votes = votes; }
 }

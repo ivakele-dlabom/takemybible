@@ -3,28 +3,28 @@ import { useBookNavigation } from "@/contexts/BookContext.tsx";
 
 const Main = () => {
   const { translation, setTranslation } = useBookNavigation();
-  const availableVersions = ["KJV"];
+  const availableTranslation = ["KJV"];
 
   return (
-    <section className="grid grid-cols-1 gap-4 place-items-center min-h-screen px-6">
+    <section className="font-firacode grid grid-cols-1 gap-4  min-h-screen px-6">
       {/*
         Select translation version dropdown
         */}
-      <label className="inline-flex items-center">
-        <span className="sr-only">Bible version</span>
+      <label className="absolute z-10 inline-flex left-4 top-4 hover:cursor-pointer">
+        <span className="sr-only">Bible translation</span>
         <select
           value={translation}
           onChange={(e) => setTranslation(e.target.value)}
-          className="h-12 rounded-md border border-gray-300 px-6 font-bold text-4xl"
+          className="h-10 rounded-sm border border-gray-300 px-6 font-bold text-xl"
         >
-          {availableVersions.map((v) => (
+          {availableTranslation .map((v) => (
             <option key={v} value={v} className="uppercase">
               {v}
             </option>
           ))}
         </select>
       </label>
-      <BookDisplay className="w-[60%]" />
+      <BookDisplay className="w-full" />
     </section>
   );
 };

@@ -1,4 +1,4 @@
-import type { Book, Verse } from "@/types/main";
+import type { Book } from "@/types/main";
 
 export async function fetchBooks(translation: string): Promise<Book[]> {
   const res = await fetch(`http://localhost:9090/api/${translation.toLowerCase()}/books`, { method: "GET" });
@@ -6,7 +6,6 @@ export async function fetchBooks(translation: string): Promise<Book[]> {
   if (res.ok) {
 
     const data = await res.json();
-    console.log("res", data);
 
     return data.map((book: { id: number; name: string }) => ({
       id: book.id,

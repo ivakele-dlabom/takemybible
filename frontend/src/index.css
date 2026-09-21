@@ -5,6 +5,36 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+/* ── Fira Code Nerd Font (variable-width glyph spacing) ── */
+@font-face { font-family: 'FiraCode Nerd Font'; src: url('/fonts/FiraCodeNerdFont-Light.ttf')    format('truetype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font'; src: url('/fonts/FiraCodeNerdFont-Regular.ttf')  format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font'; src: url('/fonts/FiraCodeNerdFont-Retina.ttf')   format('truetype'); font-weight: 450; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font'; src: url('/fonts/FiraCodeNerdFont-Medium.ttf')   format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font'; src: url('/fonts/FiraCodeNerdFont-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font'; src: url('/fonts/FiraCodeNerdFont-Bold.ttf')     format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
+
+/* ── Fira Code Nerd Font Mono (all glyphs single-width) ── */
+@font-face { font-family: 'FiraCode Nerd Font Mono'; src: url('/fonts/FiraCodeNerdFontMono-Light.ttf')    format('truetype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Mono'; src: url('/fonts/FiraCodeNerdFontMono-Regular.ttf')  format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Mono'; src: url('/fonts/FiraCodeNerdFontMono-Retina.ttf')   format('truetype'); font-weight: 450; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Mono'; src: url('/fonts/FiraCodeNerdFontMono-Medium.ttf')   format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Mono'; src: url('/fonts/FiraCodeNerdFontMono-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Mono'; src: url('/fonts/FiraCodeNerdFontMono-Bold.ttf')     format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
+
+/* ── Fira Code Nerd Font Propo (proportional icon widths) ── */
+@font-face { font-family: 'FiraCode Nerd Font Propo'; src: url('/fonts/FiraCodeNerdFontPropo-Light.ttf')    format('truetype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Propo'; src: url('/fonts/FiraCodeNerdFontPropo-Regular.ttf')  format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Propo'; src: url('/fonts/FiraCodeNerdFontPropo-Retina.ttf')   format('truetype'); font-weight: 450; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Propo'; src: url('/fonts/FiraCodeNerdFontPropo-Medium.ttf')   format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Propo'; src: url('/fonts/FiraCodeNerdFontPropo-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FiraCode Nerd Font Propo'; src: url('/fonts/FiraCodeNerdFontPropo-Bold.ttf')     format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
+
+@theme {
+  --font-fira: 'FiraCode Nerd Font', monospace;
+  --font-fira-mono: 'FiraCode Nerd Font Mono', monospace;
+  --font-fira-propo: 'FiraCode Nerd Font Propo', monospace;
+}
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -96,25 +126,6 @@
 
   --sidebar-ring: oklch(0.708 0 0)}
 
-/* @media (prefers-color-scheme: dark) { */
-/*   :root { */
-/*     --text: #9ca3af; */
-/*     --text-h: #f3f4f6; */
-/*     --bg: #16171d; */
-/*     --border: #2e303a; */
-/*     --code-bg: #1f2028; */
-/*     --accent: #c084fc; */
-/*     --accent-bg: rgba(192, 132, 252, 0.15); */
-/*     --accent-border: rgba(192, 132, 252, 0.5); */
-/*     --social-bg: rgba(47, 48, 58, 0.5); */
-/*     --shadow: */
-/*       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px; */
-/*   } */
-/**/
-/*   #social .button-icon { */
-/*     filter: invert(1) brightness(2); */
-/*   } */
-/* } */
 
 #root {
   max-width: 100%;
@@ -125,6 +136,22 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+.bible-page {
+  background: #f4ecd8;
+  color: #241f18;
+
+  font-family: "IM FELL English", serif;
+
+  width: min(900px, 90vw);
+  min-height: 1200px;
+
+  padding: 80px 90px;
+
+  box-shadow:
+          0 8px 30px rgba(0, 0, 0, 0.25);
+
+  line-height: 1.65;
 }
 
 body {

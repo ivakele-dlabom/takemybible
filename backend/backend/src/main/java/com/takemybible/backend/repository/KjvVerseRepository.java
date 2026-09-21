@@ -9,4 +9,5 @@ public interface KjvVerseRepository extends JpaRepository<Verse, Integer> {
     List<Verse> findByBookIdAndChapterOrderByVerseAsc(Integer bookId, int chapter);
 
     List<Verse> findByBookIdOrderByChapterAscVerseAsc(Integer bookId);
+    List<Verse> findByBookIdAndChapterAndVerseBetweenOrderByVerseAsc(Integer bookId, Integer chapter, Integer verseStart, Integer verseEnd);
 }

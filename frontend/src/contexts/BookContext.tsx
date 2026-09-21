@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useState, useCallback, type ReactNode} from "react";
-import type {Book} from "../types/kjv.ts";
-import {getBookData} from "../utils/kjv.ts";
+import type {Book} from "../types/main.ts";
+import type {Dispatch, SetStateAction} from "react";
 
 export type Version = "KJV" | "NIV";
 
@@ -21,6 +21,7 @@ interface Value extends BookNavigationType {
   previousBook: () => void;
   reset: () => void;
   setTranslation: (translation: string) => void;
+  setBooks: Dispatch<SetStateAction<Book[]>>;
 }
 
 const DEFAULT_STATE: BookNavigationType = {
@@ -48,7 +49,7 @@ export const BookNavigationProvider: React.FC<Props> = ({
   const [bookNumber, setBookNumber] = useState<number>(initialBook);
   const [chapterNumber, setChapterNumber] = useState<number>(initialChapter);
   const [translation, setTranslation] = useState<string>(initialTranslation);
-  const books: Book[] = []; // Gets it from storage
+  const [books, setBooks] = useState<Book[]>([]);
 
   const nextChapter = useCallback(() => {
     setChapterNumber((prev) => prev + 1);
@@ -77,6 +78,7 @@ export const BookNavigationProvider: React.FC<Props> = ({
 
   const value: Value = {
     books,
+    setBooks,
     bookNumber,
     chapterNumber,
     setBookNumber,
