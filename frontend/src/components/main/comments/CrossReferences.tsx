@@ -18,6 +18,7 @@ export default function CrossReferences() {
     const timer = useRef<number | undefined>(undefined);
 
     const handleScroll = () => {
+        // console.log("scrolling: ", scrolling);
         setScrolling(true);
         window.clearTimeout(timer.current);
         timer.current = window.setTimeout(() => setScrolling(false), 600);
@@ -26,7 +27,7 @@ export default function CrossReferences() {
     useEffect(() => () => window.clearTimeout(timer.current), []);
 
     return (
-       <section  onScroll={handleScroll} className={`p-4 h-130  overflow-y-auto 
+       <section  onScroll={handleScroll} className={`p-4 h-130 w-150  overflow-y-auto 
         transition-all
         duration-500
         [&::-webkit-scrollbar]:h-[6px] 
@@ -46,7 +47,7 @@ export default function CrossReferences() {
                   <span className={"text-gray-500 text-sm"}>Showing {`${crossReferences.length}`} validated biblical connection</span>
               </div>
 
-              <button className={"flex flex-row gap-2 h-10 rounded-md border border-gray-300 p-2 hover:cursor-pointer"}>
+              <button className={"flex flex-row gap-2 h-10 rounded-sm border border-gray-300 p-2 hover:cursor-pointer"}>
                   <Plus className={"size-4 my-auto"}/>
                   <span className={"my-auto font-bold"}>Add Ref</span>
               </button>
@@ -58,9 +59,9 @@ export default function CrossReferences() {
            </div>
 
            <div className="w-full mt-2 h-px bg-gray-300 my-4"></div>
-           {crossReferences.map((crossReference: CrossReference) => {
+           {crossReferences.map((crossReference: CrossReference, index) => {
                return (
-                   <CrossReferenceCard reference={crossReference}/>
+                   <CrossReferenceCard key={index} id={index} reference={crossReference}/>
                )
            })}
        </section>

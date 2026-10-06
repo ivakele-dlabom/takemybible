@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, ChevronUp, ChevronDown, Copy } from "lucide-react";
+import {ExternalLink, Copy, ArrowBigDown, ArrowBigUp} from "lucide-react";
 import type { CrossReference, Verse } from "@/types/main.ts";
 import { BACKEND_BASE_URL } from "@/utils/constants.ts";
 import { useBookNavigation } from "@/contexts/BookContext.tsx";
+import {toRoman} from "@/utils/tools.ts";
+import {useAuth} from "@/contexts/AuthContext.tsx";
+import {useNavigate} from "react-router-dom";
 
 interface CrossReferenceCardProps {
     reference: CrossReference;
-    /** The quoted verse text — not part of CrossReference, since that's usually fetched separately. */
     verseText?: string;
-    /** Optional topic tag shown as a chip, e.g. "Deity • Creation". */
     category?: string;
     onOpenReference?: (reference: CrossReference) => void;
     onVote?: (reference: CrossReference, direction: "up" | "down") => void;
     onCopy?: (reference: CrossReference) => void;
     onCompareText?: (reference: CrossReference) => void;
+    id?:number;
 }
 
 function formatVerseRange(chapter: number, start: number, end: number) {
@@ -27,18 +29,41 @@ export default function CrossReferenceCard({
     onVote,
     onCopy,
     onCompareText,
+    id
 }: CrossReferenceCardProps) {
     const [votes, setVotes] = useState(reference.votes);
-    const { translation, books } = useBookNavigation();
     const [verseText, setVerseText] = useState<string[]>([]);
+    const [votingLoading, setVotingLoading] = useState(false);
+    const {user} = useAuth();
+    const {translation, books} = useBookNavigation();
+    const navigate = useNavigate();
+
+    if (!user) {
+        navigate("/login")
+        return
+    }
 
     // Returns undefined while books haven't loaded or if the name isn't found.
-    const getBookId = (bookName: string) =>
-        books.find((b) => b.name === bookName)?.id;
-
+    const getBookId = (bookName: string) =>{
+        const splitString = bookName.split(" ")
+        // check that the book name is numbered
+        if (splitString.length == 2) {
+            // convert the decimal to roman numeral
+            // console.log(splitString)
+            const romanNumber = toRoman(Number(splitString[0]))
+            bookName = `${romanNumber} ${splitString[1]}`
+        }
+        if (bookName === "Revelation") {
+            bookName = "Revelation of John"
+        }
+        // console.log(bookName, books.find((b) => b.name === bookName)?.id)
+        return books.find((b) => b.name === bookName)?.id;
+    }
     useEffect(() => {
         const bookId = getBookId(reference.toBook);
-        if (bookId === undefined || !translation) return; // books not loaded yet
+        if (bookId === undefined || !translation) {
+            return
+        }; // books not loaded yet
 
         const controller = new AbortController();
 
@@ -46,14 +71,17 @@ export default function CrossReferenceCard({
             try {
                 const url = `${BACKEND_BASE_URL}api/${translation.toLowerCase()}/verses/${bookId}/${reference.toChapter}/${reference.toVerseStart}/${reference.toVerseEnd}`;
                 const response = await fetch(url, { signal: controller.signal });
-
                 if (!response.ok) {
+                    console.log(`cant get verse ${reference.toChapter} ${reference.toVerse}`);
                     setVerseText([]);
                     return;
                 }
 
                 const data: Verse[] = await response.json();
-                setVerseText(data.map((v) => v.text));
+                setVerseText(data.map((v) => {
+                    console.log(v.chapter, v.verse, v.text)
+                    return v.text
+                }));
             } catch (err) {
                 if ((err as Error).name !== "AbortError") {
                     console.error("Failed to fetch verses", err);
@@ -73,9 +101,16 @@ export default function CrossReferenceCard({
         translation,
     ]);
 
-    const handleVote = (direction: "up" | "down") => {
+    const handleVote = async (direction: "up" | "down") => {
         setVotes((v) => v + (direction === "up" ? 1 : -1));
-        onVote?.(reference, direction);
+        setVotingLoading(true); onVote?.(reference, direction);
+        try {
+            const response = await fetch(`${BACKEND_BASE_URL}api/cross-reference/vote/${reference.id}/${user.userId}`, {
+                method: "GET"
+            })
+        } catch (e) {
+
+        }
     };
 
     const handleCopy = () => {
@@ -92,7 +127,7 @@ export default function CrossReferenceCard({
     )}`;
 
     return (
-        <div className="w-full max-w-2xl rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div key={id} className="w-full max-w-2xl rounded-sm border border-gray-200 bg-white p-6 shadow-sm">
             <div className="flex items-start justify-between gap-4">
                 <div className="flex flex-wrap items-center gap-3">
                     <button
@@ -105,27 +140,26 @@ export default function CrossReferenceCard({
                     </button>
 
                     {category && (
-                        <span className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1 text-sm font-bold uppercase tracking-wide text-blue-700">
+                        <span className="rounded-sm border border-blue-200 bg-blue-50 px-3 py-1 text-sm font-bold uppercase tracking-wide text-blue-700">
                             {category}
                         </span>
                     )}
 
-                    <span className="text-sm text-gray-400">
-                        toVerse: {reference.toVerseStart}-{reference.toVerseEnd}
-                    </span>
+
                 </div>
 
-                <div className="flex flex-none flex-col items-center rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                <div className="flex flex-none flex-row gap-3 h-10 items-center rounded-sm border border-gray-200 bg-gray-50 px-3 py-2">
                     <button
                         type="button"
                         aria-label="Upvote"
                         onClick={() => handleVote("up")}
                         className="text-gray-500 hover:text-gray-800"
+                        disabled={votingLoading}
                     >
-                        <ChevronUp size={20} />
+                        <ArrowBigUp className={"hover:fill-amber-400 animate-in"} size={20} />
                     </button>
-                    <span className="py-1 text-lg font-bold text-gray-900">
-                        +{votes}
+                    <span className="py-1 text-sm font-bold text-gray-900">
+                        {votes}
                     </span>
                     <button
                         type="button"
@@ -133,7 +167,7 @@ export default function CrossReferenceCard({
                         onClick={() => handleVote("down")}
                         className="text-gray-500 hover:text-gray-800"
                     >
-                        <ChevronDown size={20} />
+                        <ArrowBigDown className={"hover:fill-red-300 animate-in"} size={20} />
                     </button>
                 </div>
             </div>

@@ -27,7 +27,7 @@ export const BookDisplay = ({ className }: Props) => {
   const { data: verses } = useVerses();
   const { data: chapterCount, isLoading: isChapterCountLoading } = useChapterCount();
   const { chapterNumber, setChapterNumber, setBookNumber, bookNumber, setBooks} = useBookNavigation();
-  const {setSelectedVerseId} = useVerseSelection();
+  const {setSelectedVerseId, setSelectedVerseNumber} = useVerseSelection();
 
   // Keep the fetched books in sync with the navigation context so other
   // consumers (e.g. useCrossReferences) can read them from context.
@@ -40,6 +40,7 @@ export const BookDisplay = ({ className }: Props) => {
     const idx = Number.parseInt(e.currentTarget.id);
     setChapterNumber (idx);
     setSelectedVerseId(1);
+    setSelectedVerseNumber(1)
   };
 
   const handleSelectedBook = (e: React.MouseEvent<HTMLButtonElement>) => {

@@ -28,10 +28,15 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const [serverError, setServerError] = useState<string | null>(null);
 
+  if (user) {
+    navigate("/");
+    return
+
+  }
   const {
     register,
     handleSubmit,
