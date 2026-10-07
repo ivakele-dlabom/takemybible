@@ -6,13 +6,13 @@ import { useBookNavigation } from "@/contexts/BookContext.tsx";
 import {toRoman} from "@/utils/tools.ts";
 import {useAuth} from "@/contexts/AuthContext.tsx";
 import {useNavigate} from "react-router-dom";
+import {toast} from "@/components/ui/toast"
 
 interface CrossReferenceCardProps {
     reference: CrossReference;
     verseText?: string;
     category?: string;
     onOpenReference?: (reference: CrossReference) => void;
-    onVote?: (reference: CrossReference, direction: "up" | "down") => void;
     onCopy?: (reference: CrossReference) => void;
     onCompareText?: (reference: CrossReference) => void;
     id?:number;
@@ -26,7 +26,6 @@ export default function CrossReferenceCard({
     reference,
     category,
     onOpenReference,
-    onVote,
     onCopy,
     onCompareText,
     id
@@ -103,14 +102,18 @@ export default function CrossReferenceCard({
 
     const handleVote = async (direction: "up" | "down") => {
         setVotes((v) => v + (direction === "up" ? 1 : -1));
-        setVotingLoading(true); onVote?.(reference, direction);
+        setVotingLoading(true);
         try {
-            const response = await fetch(`${BACKEND_BASE_URL}api/cross-reference/vote/${reference.id}/${user.userId}`, {
+            const voteValue =  (direction === "up" ? 1 : -1)
+            await fetch(`${BACKEND_BASE_URL}api/cross-reference/vote/${reference.id}/${user.userId}/${voteValue}`, {
                 method: "GET"
-            })
+            });
         } catch (e) {
-
+            toast.add({type: "error", priority: "high", description: "Vote unsuccessful"})
+            setVotes((v) => v + (direction === "up" ? -1 : -1));
         }
+
+        setVotingLoading(true);
     };
 
     const handleCopy = () => {
