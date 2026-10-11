@@ -1,4 +1,4 @@
-package com.takemybible.backend.controller;
+package com.takemybible.backend.controller.kjv;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

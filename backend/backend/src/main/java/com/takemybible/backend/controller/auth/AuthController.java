@@ -1,4 +1,4 @@
-package com.takemybible.backend.controller;
+package com.takemybible.backend.controller.auth;
 
 import com.takemybible.backend.dto.AuthRequest;
 import com.takemybible.backend.dto.AuthResponse;

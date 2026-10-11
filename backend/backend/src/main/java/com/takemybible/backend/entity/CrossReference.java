@@ -1,9 +1,15 @@
 package com.takemybible.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "cross_references")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CrossReference {
 
     @Id
@@ -37,33 +43,4 @@ public class CrossReference {
     @Column(name = "votes")
     private Integer votes;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getFromBook() { return fromBook; }
-    public void setFromBook(String fromBook) { this.fromBook = fromBook; }
-
-    public String getToBook() { return toBook; }
-    public void setToBook(String toBook) { this.toBook = toBook; }
-
-    public Integer getFromChapter() { return fromChapter; }
-    public void setFromChapter(Integer fromChapter) { this.fromChapter = fromChapter; }
-
-    public Integer getToChapter() { return toChapter; }
-    public void setToChapter(Integer toChapter) { this.toChapter = toChapter; }
-
-    public Integer getFromVerse() { return fromVerse; }
-    public void setFromVerse(Integer fromVerse) { this.fromVerse = fromVerse; }
-
-    public Integer getToVerse() { return toVerse; }
-    public void setToVerse(Integer toVerse) { this.toVerse = toVerse; }
-
-    public Integer getToVerseStart() { return toVerseStart; }
-    public void setToVerseStart(Integer toVerseStart) { this.toVerseStart = toVerseStart; }
-
-    public Integer getToVerseEnd() { return toVerseEnd; }
-    public void setToVerseEnd(Integer toVerseEnd) { this.toVerseEnd = toVerseEnd; }
-
-    public Integer getVotes() { return votes; }
-    public void setVotes(Integer votes) { this.votes = votes; }
 }

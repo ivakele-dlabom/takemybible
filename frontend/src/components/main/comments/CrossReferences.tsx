@@ -23,6 +23,7 @@ export default function CrossReferences() {
         window.clearTimeout(timer.current);
         timer.current = window.setTimeout(() => setScrolling(false), 600);
     };
+    console.log(crossReferences.slice(0, 5))
 
     useEffect(() => () => window.clearTimeout(timer.current), []);
 

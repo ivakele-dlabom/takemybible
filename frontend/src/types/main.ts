@@ -6,6 +6,12 @@ export interface Verse {
   text: string;
 }
 
+export interface CrossReferenceVote {
+  userId: string;
+  crossReferenceId: string;
+  value: number;
+}
+
 
 export interface Book {
   id: number;
@@ -23,4 +29,5 @@ export interface CrossReference {
   toVerseEnd: number;
   votes: number;
   toVerse: number;
+  userVote: 0 | 1 | -1;
 }

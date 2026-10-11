@@ -1,4 +1,4 @@
-package com.takemybible.backend.controller;
+package com.takemybible.backend.controller.comment;
 
 import com.takemybible.backend.dto.CommentRequest;
 import com.takemybible.backend.entity.BibleVerse;

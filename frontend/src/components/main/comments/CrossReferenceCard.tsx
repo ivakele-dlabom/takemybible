@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import {ExternalLink, Copy, ArrowBigDown, ArrowBigUp} from "lucide-react";
 import type { CrossReference, Verse } from "@/types/main.ts";
-import { BACKEND_BASE_URL } from "@/utils/constants.ts";
+import { BACKEND_BASE_URL } from "@/lib/constants.ts";
 import { useBookNavigation } from "@/contexts/BookContext.tsx";
-import {toRoman} from "@/utils/tools.ts";
 import {useAuth} from "@/contexts/AuthContext.tsx";
 import {useNavigate} from "react-router-dom";
 import {toast} from "@/components/ui/toast"
+import {toRoman} from "@/lib/utils.ts";
 
 interface CrossReferenceCardProps {
     reference: CrossReference;
@@ -30,9 +30,10 @@ export default function CrossReferenceCard({
     onCompareText,
     id
 }: CrossReferenceCardProps) {
-    const [votes, setVotes] = useState(reference.votes);
+    const [userVote, setUserVotes] = useState(0);
     const [verseText, setVerseText] = useState<string[]>([]);
     const [votingLoading, setVotingLoading] = useState(false);
+    const [referenceVote, setReferenceVote] = useState<0 | -1 | 1>(reference.userVote);
     const {user} = useAuth();
     const {translation, books} = useBookNavigation();
     const navigate = useNavigate();
@@ -100,20 +101,27 @@ export default function CrossReferenceCard({
         translation,
     ]);
 
-    const handleVote = async (direction: "up" | "down") => {
-        setVotes((v) => v + (direction === "up" ? 1 : -1));
+    const handleVote = async (direction: 1 | -1) => {
+        setUserVotes(direction);
+        const prevReferenceVote = referenceVote;
+        setReferenceVote(direction)
         setVotingLoading(true);
         try {
-            const voteValue =  (direction === "up" ? 1 : -1)
-            await fetch(`${BACKEND_BASE_URL}api/cross-reference/vote/${reference.id}/${user.userId}/${voteValue}`, {
-                method: "GET"
+
+            const response = await fetch(`${BACKEND_BASE_URL}api/cross-reference/vote/${reference.id}/${user.userId}/${direction}`, {
+                method: "POST"
             });
+            if (!response.ok) {
+                // successfully voted
+                setReferenceVote(prevReferenceVote)
+                setUserVotes( -1*direction);
+            }
         } catch (e) {
             toast.add({type: "error", priority: "high", description: "Vote unsuccessful"})
-            setVotes((v) => v + (direction === "up" ? -1 : -1));
+            setUserVotes( -1*direction);
         }
 
-        setVotingLoading(true);
+        setVotingLoading(false);
     };
 
     const handleCopy = () => {
@@ -151,23 +159,25 @@ export default function CrossReferenceCard({
 
                 </div>
 
-                <div className="flex flex-none flex-row gap-3 h-10 items-center rounded-sm border border-gray-200 bg-gray-50 px-3 py-2">
+                <div className={`flex flex-none flex-row gap-3 h-10 items-center rounded-sm border border-gray-200 animate-in ${ referenceVote === 0? "bg-gray-50": referenceVote === 1? "bg-amber-500": "bg-red-500"} px-3 py-2`}>
+
                     <button
                         type="button"
                         aria-label="Upvote"
-                        onClick={() => handleVote("up")}
+                        onClick={() => handleVote(1)}
                         className="text-gray-500 hover:text-gray-800"
-                        disabled={votingLoading}
+                        disabled={votingLoading || referenceVote === 1}
                     >
                         <ArrowBigUp className={"hover:fill-amber-400 animate-in"} size={20} />
                     </button>
                     <span className="py-1 text-sm font-bold text-gray-900">
-                        {votes}
+                        {reference.votes + userVote}
                     </span>
                     <button
                         type="button"
                         aria-label="Downvote"
-                        onClick={() => handleVote("down")}
+                        onClick={() => handleVote(-1)}
+                        disabled={votingLoading || referenceVote === -1}
                         className="text-gray-500 hover:text-gray-800"
                     >
                         <ArrowBigDown className={"hover:fill-red-300 animate-in"} size={20} />
