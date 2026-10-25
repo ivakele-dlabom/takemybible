@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {ExternalLink, Copy, ArrowBigDown, ArrowBigUp} from "lucide-react";
+import {ExternalLink, Copy, ArrowBigDown, ArrowBigUp, ArrowUp, ArrowDown} from "lucide-react";
 import type { CrossReference, Verse } from "@/types/main.ts";
 import { BACKEND_BASE_URL } from "@/lib/constants.ts";
 import { useBookNavigation } from "@/contexts/BookContext.tsx";
@@ -159,29 +159,44 @@ export default function CrossReferenceCard({
 
                 </div>
 
-                <div className={`flex flex-none flex-row gap-3 h-10 items-center rounded-sm border border-gray-200 animate-in ${ referenceVote === 0? "bg-gray-50": referenceVote === 1? "bg-amber-500": "bg-red-500"} px-3 py-2`}>
+                <div
+                    className={`inline-flex items-center  border  rounded-lg overflow-hidden  border-gray-200 animate-in ${referenceVote === 0 ? "bg-gray-50" : referenceVote === 1 ? "bg-amber-500" : "bg-rose-50 border-rose-200"} `}>
 
-                    <button
-                        type="button"
-                        aria-label="Upvote"
-                        onClick={() => handleVote(1)}
-                        className="text-gray-500 hover:text-gray-800"
-                        disabled={votingLoading || referenceVote === 1}
-                    >
-                        <ArrowBigUp className={"hover:fill-amber-400 animate-in"} size={20} />
+                    {/*<button*/}
+                    {/*    type="button"*/}
+                    {/*    aria-label="Upvote"*/}
+                    {/*    onClick={() => handleVote(1)}*/}
+                    {/*    className=""*/}
+                    {/*    disabled={votingLoading || referenceVote === 1}*/}
+                    {/*>*/}
+                    {/*    <ArrowUp className={"hover:fill-amber-400 animate-in"} size={20}/>*/}
+                    {/*</button>*/}
+                    <button aria-label="Upvote" className="px-2 py-1 text-rose-600 hover:bg-rose-100 transition-colors"
+                            type="button">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="2.5"></path>
+                        </svg>
                     </button>
-                    <span className="py-1 text-sm font-bold text-gray-900">
+                    <span className="py-1 text-xs font-bold text-gray-900">
                         {reference.votes + userVote}
                     </span>
-                    <button
-                        type="button"
-                        aria-label="Downvote"
-                        onClick={() => handleVote(-1)}
-                        disabled={votingLoading || referenceVote === -1}
-                        className="text-gray-500 hover:text-gray-800"
-                    >
-                        <ArrowBigDown className={"hover:fill-red-300 animate-in"} size={20} />
+                    <button aria-label="Downvote"
+                            className="px-2 py-1 text-rose-600 hover:bg-rose-100 transition-colors" type="button">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="2.5"></path>
+                        </svg>
                     </button>
+                    {/*<button*/}
+                    {/*    type="button"*/}
+                    {/*    aria-label="Downvote"*/}
+                    {/*    onClick={() => handleVote(-1)}*/}
+                    {/*    disabled={votingLoading || referenceVote === -1}*/}
+                    {/*    className=""*/}
+                    {/*>*/}
+                    {/*    <ArrowDown className={"px-2 py-1 text-rose-600 hover:bg-rose-100 transition-colors"} size={20} />*/}
+                    {/*</button>*/}
                 </div>
             </div>
 

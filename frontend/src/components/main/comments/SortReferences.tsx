@@ -8,8 +8,8 @@ interface Props {
 }
 export function SortReferences({sortValue, setSortValue}: Props) {
     return (
-        <NativeSelect  value={sortValue} onChange={(e) => setSortValue(e.target.value)}>
-            <NativeSelectOption className={"h-10"} value="">Select status</NativeSelectOption>
+        <NativeSelect className={"h-8"}  value={sortValue} onChange={(e) => setSortValue(e.target.value)}>
+            <NativeSelectOption className={""} value="">Status: All</NativeSelectOption>
             <NativeSelectOption value="top-voted">Top Voted</NativeSelectOption>
         </NativeSelect>
     )

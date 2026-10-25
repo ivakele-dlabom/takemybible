@@ -28,7 +28,7 @@ export default function CrossReferences() {
     useEffect(() => () => window.clearTimeout(timer.current), []);
 
     return (
-       <section  onScroll={handleScroll} className={`p-4 h-130 w-150  overflow-y-auto 
+       <section  onScroll={handleScroll} className={`p-4 h-130 w-140 font-geist  overflow-y-auto 
         transition-all
         duration-500
         [&::-webkit-scrollbar]:h-[6px] 
@@ -43,18 +43,18 @@ export default function CrossReferences() {
               <div className={"flex flex-col gap-1 items-start"}>
                   <div className={"flex flex-row gap-2 "}>
                       <span className={"rounded-full bg-amber-500 size-3 my-auto"}></span>
-                      <span className={"text-xl font-bold uppercase "}>{`${bookName} ${chapterNumber}: ${selectedVerseNumber}`} cross references</span>
+                      <span className={"text-md font-bold uppercase font-geist"}>{`${bookName} ${chapterNumber}: ${selectedVerseNumber}`} cross references</span>
                   </div>
-                  <span className={"text-gray-500 text-sm"}>Showing {`${crossReferences.length}`} validated biblical connection</span>
+                  <span className={"text-gray-500 font-geist-mono text-xs"}>Showing {`${crossReferences.length}`} validated biblical connection</span>
               </div>
 
-              <button className={"flex flex-row gap-2 h-10 rounded-sm border border-gray-300 p-2 hover:cursor-pointer"}>
+              <button className={"flex flex-row gap-2 h-8 bg-black text-white rounded-sm border border-gray-300 p-2 hover:cursor-pointer"}>
                   <Plus className={"size-4 my-auto"}/>
-                  <span className={"my-auto font-bold"}>Add Ref</span>
+                  <span className={"my-auto font-bold text-xs"}>Add Ref</span>
               </button>
           </div>
            {/* Search and Sorter*/}
-           <div className={"flex flex-row justify-between mt-4"}>
+           <div className={"flex flex-row justify-between mt-4 h-8"}>
                <SearchReference/>
                <SortReferences setSortValue={setSortValue} sortValue={sortValue} />
            </div>

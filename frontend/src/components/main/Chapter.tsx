@@ -24,7 +24,7 @@ export const Chapter = ({ verses, onVerseSelect }: Props) => {
     useEffect(() => () => window.clearTimeout(timer.current), []);
   if (!verses) return null;
     return (
-        <div  onScroll={handleScroll} className={`${selected? "w-200 ml-4 ": "w-200"}` + ` h-164  overflow-y-auto 
+        <div  onScroll={handleScroll} className={`${selected? "w-160 ml-4 ": "w-160"}` + ` h-164  overflow-y-auto 
         transition-all
         duration-500
         [&::-webkit-scrollbar]:h-[6px] 

@@ -30,10 +30,47 @@
 @font-face { font-family: 'FiraCode Nerd Font Propo'; src: url('/fonts/FiraCodeNerdFontPropo-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
 @font-face { font-family: 'FiraCode Nerd Font Propo'; src: url('/fonts/FiraCodeNerdFontPropo-Bold.ttf')     format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
 
+/* ── Geist Mono Nerd Font (variable-width glyph spacing) ── */
+@font-face { font-family: 'Geist Mono Nerd Font'; src: url('/fonts/geist/GeistMonoNerdFont-Thin.otf')       format('opentype'); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font'; src: url('/fonts/geist/GeistMonoNerdFont-UltraLight.otf') format('opentype'); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font'; src: url('/fonts/geist/GeistMonoNerdFont-Light.otf')      format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font'; src: url('/fonts/geist/GeistMonoNerdFont-Regular.otf')    format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font'; src: url('/fonts/geist/GeistMonoNerdFont-Medium.otf')     format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font'; src: url('/fonts/geist/GeistMonoNerdFont-SemiBold.otf')   format('opentype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font'; src: url('/fonts/geist/GeistMonoNerdFont-Bold.otf')       format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font'; src: url('/fonts/geist/GeistMonoNerdFont-Black.otf')      format('opentype'); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font'; src: url('/fonts/geist/GeistMonoNerdFont-UltraBlack.otf') format('opentype'); font-weight: 900; font-style: normal; font-display: swap; }
+
+/* ── Geist Mono Nerd Font Mono (all glyphs single-width) ── */
+@font-face { font-family: 'Geist Mono Nerd Font Mono'; src: url('/fonts/geist/GeistMonoNerdFontMono-Thin.otf')       format('opentype'); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Mono'; src: url('/fonts/geist/GeistMonoNerdFontMono-UltraLight.otf') format('opentype'); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Mono'; src: url('/fonts/geist/GeistMonoNerdFontMono-Light.otf')      format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Mono'; src: url('/fonts/geist/GeistMonoNerdFontMono-Regular.otf')    format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Mono'; src: url('/fonts/geist/GeistMonoNerdFontMono-Medium.otf')     format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Mono'; src: url('/fonts/geist/GeistMonoNerdFontMono-SemiBold.otf')   format('opentype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Mono'; src: url('/fonts/geist/GeistMonoNerdFontMono-Bold.otf')       format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Mono'; src: url('/fonts/geist/GeistMonoNerdFontMono-Black.otf')      format('opentype'); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Mono'; src: url('/fonts/geist/GeistMonoNerdFontMono-UltraBlack.otf') format('opentype'); font-weight: 900; font-style: normal; font-display: swap; }
+
+/* ── Geist Mono Nerd Font Propo (proportional icon widths) ── */
+@font-face { font-family: 'Geist Mono Nerd Font Propo'; src: url('/fonts/geist/GeistMonoNerdFontPropo-Thin.otf')       format('opentype'); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Propo'; src: url('/fonts/geist/GeistMonoNerdFontPropo-UltraLight.otf') format('opentype'); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Propo'; src: url('/fonts/geist/GeistMonoNerdFontPropo-Light.otf')      format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Propo'; src: url('/fonts/geist/GeistMonoNerdFontPropo-Regular.otf')    format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Propo'; src: url('/fonts/geist/GeistMonoNerdFontPropo-Medium.otf')     format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Propo'; src: url('/fonts/geist/GeistMonoNerdFontPropo-SemiBold.otf')   format('opentype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Propo'; src: url('/fonts/geist/GeistMonoNerdFontPropo-Bold.otf')       format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Propo'; src: url('/fonts/geist/GeistMonoNerdFontPropo-Black.otf')      format('opentype'); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono Nerd Font Propo'; src: url('/fonts/geist/GeistMonoNerdFontPropo-UltraBlack.otf') format('opentype'); font-weight: 900; font-style: normal; font-display: swap; }
+
 @theme {
   --font-fira: 'FiraCode Nerd Font', monospace;
   --font-fira-mono: 'FiraCode Nerd Font Mono', monospace;
   --font-fira-propo: 'FiraCode Nerd Font Propo', monospace;
+
+  --font-geist: 'Geist Mono Nerd Font', monospace;
+  --font-geist-mono: 'Geist Mono Nerd Font Mono', monospace;
+  --font-geist-propo: 'Geist Mono Nerd Font Propo', monospace;
 }
 :root {
   --text: #6b6375;

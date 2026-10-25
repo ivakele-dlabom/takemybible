@@ -4,7 +4,7 @@ interface Props {
 }
 export const VerseFeed = ({}: Props) => {
     return (
-        <section className="w-150 bg-white ">
+        <section className="w-140 bg-white ">
             <div className={"flex flex-row items-center mx-auto w-fit"}>
                 <button className={"hover:cursor-pointer font-medium p-2"}>Comments</button>
                 <div className="w-px h-4 bg-gray-300 mx-4"></div>
