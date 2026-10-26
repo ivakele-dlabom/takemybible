@@ -35,7 +35,7 @@ function AppRoutes() {
             homePage
         }
       />
-        <Route path={"/kjv/:book/:chapter/:verse"} element={
+        <Route path={"/kjv/:bookNumber/:chapterNumber/:verseNumber"} element={
             homePage
         }/>
     </Routes>

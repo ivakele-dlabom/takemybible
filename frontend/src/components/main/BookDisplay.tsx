@@ -29,7 +29,15 @@ export const BookDisplay = ({ className }: Props) => {
   const { data: chapterCount, isLoading: isChapterCountLoading } = useChapterCount();
   const { chapterNumber, setChapterNumber, setBookNumber, bookNumber, setBooks} = useBookNavigation();
   const {setSelectedVerseId, setSelectedVerseNumber} = useVerseSelection();
-  const { book: bk, chapter: ch, verse: v } = useParams<{ book: string, chapter: string, verse: string }>();
+  const { bookNumber: bkN, chapterNumber: chN, verseNumber: vN } = useParams<{ bookNumber: number, chapterNumber: number, verseNumber: number }>();
+  console.log(bkN, chN, vN);
+
+  if (bkN && chN && vN) {
+      setBookNumber(bkN);
+      setChapterNumber(chN);
+      setSelectedVerseNumber(vN);
+      setSelectedVerseId(vN);
+  }
 
   // Keep the fetched books in sync with the navigation context so other
   // consumers (e.g. useCrossReferences) can read them from context.

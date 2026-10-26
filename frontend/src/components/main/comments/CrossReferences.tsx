@@ -21,7 +21,6 @@ export default function CrossReferences() {
 
     }
 
-    console.log(crossReferences.slice(0, 5))
 
     useEffect(() => () => window.clearTimeout(timer.current), []);
 
