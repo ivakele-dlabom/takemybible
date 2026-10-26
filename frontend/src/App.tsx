@@ -17,6 +17,14 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AppRoutes() {
+    const homePage = (
+
+        <ProtectedRoute>
+            <BookNavigationProvider>
+                <Main />
+            </BookNavigationProvider>
+        </ProtectedRoute>
+    );
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
@@ -24,13 +32,12 @@ function AppRoutes() {
       <Route
         path="/*"
         element={
-          <ProtectedRoute>
-            <BookNavigationProvider>
-              <Main />
-            </BookNavigationProvider>
-          </ProtectedRoute>
+            homePage
         }
       />
+        <Route path={"/kjv/:book/:chapter/:verse"} element={
+            homePage
+        }/>
     </Routes>
   );
 }

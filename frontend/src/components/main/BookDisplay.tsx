@@ -15,6 +15,7 @@ import { useChapterCount } from "@/hooks/useChapter.ts";
 import { useBookNavigation } from "@/contexts/BookContext.tsx";
 import {VerseFeed} from "@/components/main/comments/VerseFeed.tsx";
 import {useVerseSelection} from "@/contexts/VerseSelectionContext.tsx";
+import {useParams} from "react-router-dom";
 
 
 
@@ -28,6 +29,7 @@ export const BookDisplay = ({ className }: Props) => {
   const { data: chapterCount, isLoading: isChapterCountLoading } = useChapterCount();
   const { chapterNumber, setChapterNumber, setBookNumber, bookNumber, setBooks} = useBookNavigation();
   const {setSelectedVerseId, setSelectedVerseNumber} = useVerseSelection();
+  const { book: bk, chapter: ch, verse: v } = useParams<{ book: string, chapter: string, verse: string }>();
 
   // Keep the fetched books in sync with the navigation context so other
   // consumers (e.g. useCrossReferences) can read them from context.
