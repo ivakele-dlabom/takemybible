@@ -7,19 +7,35 @@ import {SearchReference} from "@/components/main/comments/SearchReference.tsx";
 import {SortReferences} from "@/components/main/comments/SortReferences.tsx";
 import {useEffect, useRef, useState} from "react";
 import CrossReferenceCard from "@/components/main/comments/CrossReferenceCard.tsx";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function CrossReferences() {
-    const {selectedVerseNumber} = useVerseSelection();
+    const navigate = useNavigate();
+    const {selectedVerseNumber, setSelectedVerseNumber, setSelectedVerseId} = useVerseSelection();
     const {crossReferences} = useCrossReferences(selectedVerseNumber);
-    const {bookNumber, chapterNumber, books} = useBookNavigation();
+    const {bookNumber, chapterNumber, books, setBookNumber, setChapterNumber, translation} = useBookNavigation();
     const [sortValue, setSortValue] = useState("")
     const bookName = books[bookNumber-1]?.name ?? "";
     const timer = useRef<number | undefined>(undefined);
 
-    const onOpenReference = () => {
+    const onOpenReference = (bookName: string, chN: number, vN: number) => {
+        const bkN = books.findIndex(
+            (book) => book.name.trim().toLowerCase() === bookName.trim().toLowerCase()
+        );
 
-    }
+        if (bkN === -1) {
+            toast.add({ type: "error", description: `Couldn't find book: ${bookName}`, priority: "low" });
+            return;
+        }
+
+        const bookNum = bkN + 1;
+        navigate(`/${translation}/${bookNum}/${chN}/${vN}`);
+
+        setBookNumber(bookNum);
+        setChapterNumber(chN);
+        setSelectedVerseNumber(vN);
+        setSelectedVerseId(vN);
+    };
 
 
     useEffect(() => () => window.clearTimeout(timer.current), []);

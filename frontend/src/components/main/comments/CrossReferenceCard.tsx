@@ -12,7 +12,7 @@ interface CrossReferenceCardProps {
     reference: CrossReference;
     verseText?: string;
     category?: string;
-    onOpenReference?: (reference: CrossReference) => void;
+    onOpenReference?: (bookName: string, chN: number, vN: number) => void;
     onCopy?: (reference: CrossReference) => void;
     onCompareText?: (reference: CrossReference) => void;
     id?:number;
@@ -72,14 +72,12 @@ export default function CrossReferenceCard({
                 const url = `${BACKEND_BASE_URL}api/${translation.toLowerCase()}/verses/${bookId}/${reference.toChapter}/${reference.toVerseStart}/${reference.toVerseEnd}`;
                 const response = await fetch(url, { signal: controller.signal });
                 if (!response.ok) {
-                    console.log(`cant get verse ${reference.toChapter} ${reference.toVerse}`);
                     setVerseText([]);
                     return;
                 }
 
                 const data: Verse[] = await response.json();
                 setVerseText(data.map((v) => {
-                    console.log(v.chapter, v.verse, v.text)
                     return v.text
                 }));
             } catch (err) {
@@ -143,7 +141,7 @@ export default function CrossReferenceCard({
                 <div className="flex flex-wrap items-center gap-3">
                     <button
                         type="button"
-                        onClick={() => onOpenReference?.(reference)}
+                        onClick={() => onOpenReference?.(reference.toBook, reference.toChapter, reference.toVerseStart)}
                         className="flex items-center gap-1.5 text-xl font-bold text-blue-900 hover:text-blue-700"
                     >
                         {toHeading}
