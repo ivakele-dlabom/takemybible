@@ -7,20 +7,27 @@ import {SearchReference} from "@/components/main/comments/SearchReference.tsx";
 import {SortReferences} from "@/components/main/comments/SortReferences.tsx";
 import {useEffect, useRef, useState} from "react";
 import CrossReferenceCard from "@/components/main/comments/CrossReferenceCard.tsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { fromNumericToRoman } from "@/lib/utils";
+import {toast} from "@/components/ui/toast.tsx"
 
 export default function CrossReferences() {
     const navigate = useNavigate();
     const {selectedVerseNumber, setSelectedVerseNumber, setSelectedVerseId} = useVerseSelection();
     const {crossReferences} = useCrossReferences(selectedVerseNumber);
-    const {bookNumber, chapterNumber, books, setBookNumber, setChapterNumber, translation} = useBookNavigation();
+    const { books, translation} = useBookNavigation();
+    const { bookNumber, chapterNumber } = useParams<{ bookNumber: string; chapterNumber: string; verseNumber: string }>();
     const [sortValue, setSortValue] = useState("")
-    const bookName = books[bookNumber-1]?.name ?? "";
+    const bookName = books[Number(bookNumber ?? 1)-1]?.name ?? "";
     const timer = useRef<number | undefined>(undefined);
 
     const onOpenReference = (bookName: string, chN: number, vN: number) => {
+        books.map((b) => console.log(b.name));
         const bkN = books.findIndex(
-            (book) => book.name.trim().toLowerCase() === bookName.trim().toLowerCase()
+            (book) => {
+                const romanBookName = fromNumericToRoman(bookName);
+                return book.name.trim().toLowerCase() === romanBookName.trim().toLowerCase();
+            }
         );
 
         if (bkN === -1) {
@@ -29,12 +36,10 @@ export default function CrossReferences() {
         }
 
         const bookNum = bkN + 1;
-        navigate(`/${translation}/${bookNum}/${chN}/${vN}`);
 
-        setBookNumber(bookNum);
-        setChapterNumber(chN);
         setSelectedVerseNumber(vN);
         setSelectedVerseId(vN);
+        navigate(`/${translation}/${bookNum}/${chN}/${vN}`);
     };
 
 

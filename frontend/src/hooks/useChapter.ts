@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
 import { fetchChapterCount } from "@/api/chapters";
-import { useBookNavigation } from "@/contexts/BookContext.tsx";
-import { chapterKeys } from "../api/queryKeys";
+import { chapterKeys } from "@/api/queryKeys";
 
 export function useChapterCount() {
-  const { bookNumber } = useBookNavigation();
+  const { bookNumber } = useParams<{ bookNumber: string }>();
+  const bookId = Number(bookNumber);
+
   return useQuery({
-    queryKey: chapterKeys.byBookId(bookNumber),
-    queryFn: () => fetchChapterCount(bookNumber),
+    queryKey: chapterKeys.byBookId(bookId),
+    queryFn: () => fetchChapterCount(bookId),
+    enabled: Number.isInteger(bookId) && bookId > 0,
   });
 }

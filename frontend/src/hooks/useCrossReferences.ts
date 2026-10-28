@@ -4,13 +4,17 @@ import { useBookNavigation } from "@/contexts/BookContext.tsx";
 import { crossReferenceKeys } from "@/api/queryKeys.ts";
 import { fetchCrossReferences } from "@/api/crossReferences.ts";
 import {useAuth} from "@/contexts/AuthContext.tsx";
+import { useParams } from "react-router-dom";
 
 export function useCrossReferences(verse: number) {
-  const { translation, bookNumber, chapterNumber, books } = useBookNavigation();
+  const { translation, books } = useBookNavigation();
   const {user}= useAuth();
+const { bookNumber, chapterNumber } = useParams<{ bookNumber: string; chapterNumber: string }>();
+  const bN: number = Number(bookNumber);
+  const cN: number = Number(chapterNumber);
 
-  // books are 1-indexed via bookNumber; the fetched list is 0-indexed
-  const bookName = books[bookNumber - 1]?.name ?? "";
+  // books are 1-indexed via bN; the fetched list is 0-indexed
+  const bookName = books[bN - 1]?.name ?? "";
 
   const {
     data,
@@ -20,8 +24,8 @@ export function useCrossReferences(verse: number) {
     error,
     refetch,
   } = useQuery<CrossReference[]>({
-    queryKey: crossReferenceKeys.byVerse(translation, bookName, chapterNumber, verse),
-    queryFn: () => fetchCrossReferences(translation, bookName, chapterNumber, verse, user?.userId),
+    queryKey: crossReferenceKeys.byVerse(translation, bookName, cN, verse),
+    queryFn: () => fetchCrossReferences(translation, bookName, cN, verse, user?.userId),
     // Only fire once we actually have a book name and a valid verse.
     // The query re-runs automatically whenever the queryKey changes
     // (i.e. when the selected verse/chapter/book changes).

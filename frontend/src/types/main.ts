@@ -12,6 +12,11 @@ export interface CrossReferenceVote {
   value: number;
 }
 
+export interface Citation {
+    bookNumber: number;
+    chapterNumber: number;
+    verseNumber: number;
+}
 
 export interface Book {
   id: number;

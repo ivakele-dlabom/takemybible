@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { string } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -49,5 +50,21 @@ export function toRoman(num: number): string {
     }
   }
   return result;
+}
+
+export function fromNumericToRoman(bookName: string) : string  {
+
+        const splitString = bookName.split(" ");
+        // check that the book name is numbered
+        if (splitString.length == 2) {
+            // convert the decimal to roman numeral
+            // console.log(splitString)
+            const romanNumber = toRoman(Number(splitString[0]))
+            bookName = `${romanNumber} ${splitString[1]}`
+        }
+        if (bookName === "Revelation") {
+            bookName = "Revelation of John"
+        }
+        return bookName;
 }
 

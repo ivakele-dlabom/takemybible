@@ -2,8 +2,6 @@ package com.takemybible.backend.service;
 
 import com.takemybible.backend.entity.CrossReference;
 import com.takemybible.backend.repository.CrossReferenceRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
