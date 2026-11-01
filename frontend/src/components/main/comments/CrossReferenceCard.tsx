@@ -142,10 +142,13 @@ export default function CrossReferenceCard({
                     <button
                         type="button"
                         onClick={() => onOpenReference?.(reference.toBook, reference.toChapter, reference.toVerseStart)}
-                        className="flex items-center gap-1.5 text-xl font-bold text-blue-900 hover:text-blue-700"
+                        className="flex items-center group gap-1.5 text-xl font-bold text-blue-900 hover:text-blue-700"
                     >
                         {toHeading}
-                        <ExternalLink size={16} />
+                        <ExternalLink
+                        size={16}
+                        className="transition-transform duration-200 group-hover:scale-125"
+                        />
                     </button>
 
                     {category && (
@@ -158,16 +161,16 @@ export default function CrossReferenceCard({
                 </div>
 
                 <div
-                    className={`inline-flex items-center  border  rounded-lg overflow-hidden  border-gray-200 animate-in ${referenceVote === 0 ? "bg-gray-50" : referenceVote === 1 ? "bg-amber-500" : "bg-rose-50 border-rose-200"} `}>
+                    className={`h-7.5 gap-2 inline-flex items-center  border  rounded-lg overflow-hidden  border-gray-200 animate-in ${referenceVote === 0 ? "bg-gray-50" : referenceVote === 1 ? "bg-amber-500" : "bg-rose-50 border-rose-200"} `}>
 
                     <button
                         onClick={() => handleVote(1)}
-                        disabled={votingLoading || referenceVote === 1}
-                        aria-label="Upvote" className="px-2 py-1 text-rose-600 hover:bg-rose-100 transition-colors"
+                        disabled={votingLoading}
+                        aria-label="Upvote" className="h-7.5 w-7.5 px-2 py-1 text-rose-600 hover:bg-rose-100 transition-colors"
                             type="button">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"
-                                  stroke-width="2.5"></path>
+                            <path d="M5 15l7-7 7 7" strokeLinecap="round" strokeLinejoin="round"
+                                  strokeWidth="2.5"></path>
                         </svg>
                     </button>
                     <span className="py-1 text-xs font-bold text-gray-900">
@@ -177,10 +180,10 @@ export default function CrossReferenceCard({
 
                                 onClick={() => handleVote(-1)}
                                 disabled={votingLoading || referenceVote === -1}
-                            className="px-2 py-1 text-rose-600 hover:bg-rose-100 transition-colors" type="button">
+                                className="px-2 py-1 h-7.5 w-7.5 text-rose-600 hover:bg-rose-50 transition-colors " type="button">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"
-                                  stroke-width="2.5"></path>
+                            <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round"
+                                  strokeWidth="2.5"></path>
                         </svg>
                     </button>
                 </div>
