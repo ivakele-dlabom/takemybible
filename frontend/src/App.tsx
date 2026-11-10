@@ -31,9 +31,7 @@ function AppRoutes() {
       <Route path="/signup" element={<SignupPage />} />
       <Route
         path="/*"
-        element={
-            homePage
-        }
+        element={<Navigate to="/kjv/1/1/1" replace />} 
       />
         <Route path={"/kjv/:bookNumber/:chapterNumber/:verseNumber"} element={
             homePage

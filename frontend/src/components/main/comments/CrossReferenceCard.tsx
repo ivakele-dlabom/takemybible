@@ -30,18 +30,15 @@ export default function CrossReferenceCard({
     onCompareText,
     id
 }: CrossReferenceCardProps) {
-    const [userVote, setUserVotes] = useState(0);
     const [verseText, setVerseText] = useState<string[]>([]);
     const [votingLoading, setVotingLoading] = useState(false);
     const [referenceVote, setReferenceVote] = useState<0 | -1 | 1>(reference.userVote);
+    const [numberOfVotes, setNumberOfVotes] = useState(reference.votes);
     const {user} = useAuth();
     const {translation, books} = useBookNavigation();
     const navigate = useNavigate();
 
-    if (!user) {
-        navigate("/login")
-        return
-    }
+
 
     // Returns undefined while books haven't loaded or if the name isn't found.
     const getBookId = (bookName: string) =>{
@@ -89,7 +86,6 @@ export default function CrossReferenceCard({
 
         getVerses();
         return () => controller.abort();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         books,
         reference.toBook,
@@ -99,24 +95,40 @@ export default function CrossReferenceCard({
         translation,
     ]);
 
-    const handleVote = async (direction: 1 | -1) => {
-        setUserVotes(direction);
-        const prevReferenceVote = referenceVote;
-        setReferenceVote(direction)
-        setVotingLoading(true);
-        try {
+    useEffect(() => {
+        if (!user) navigate("/login");
+    }, [user, navigate]);
 
-            const response = await fetch(`${BACKEND_BASE_URL}api/cross-reference/vote/${reference.id}/${user.userId}/${direction}`, {
-                method: "POST"
-            });
+    if (!user) {
+        navigate("/login");
+        return ;
+    }
+
+    const handleVote = async (direction: 1 | -1) => {
+        const prevVote = referenceVote;
+        const prevVotes = numberOfVotes;
+
+        const newVote: 0 | 1 | -1 = prevVote === direction ? 0 : direction;
+        const delta = newVote - prevVote; // +1/-1 for new/undo, ±2 for a switch
+
+        setReferenceVote(newVote);
+        setNumberOfVotes(prevVotes + delta);
+        setVotingLoading(true);
+
+        try {
+            const response = await fetch(
+                `${BACKEND_BASE_URL}api/cross-reference/vote/${reference.id}/${user.userId}/${direction}`,
+                { method: "POST" }
+            );
             if (!response.ok) {
-                // successfully voted
-                setReferenceVote(prevReferenceVote)
-                setUserVotes( -1*direction);
+                setReferenceVote(prevVote);
+                setNumberOfVotes(prevVotes);
+                toast.add({ type: "error", priority: "high", description: "Vote unsuccessful" });
             }
         } catch (e) {
-            toast.add({type: "error", priority: "high", description: "Vote unsuccessful"})
-            setUserVotes( -1*direction);
+            setReferenceVote(prevVote);
+            setNumberOfVotes(prevVotes);
+            toast.add({ type: "error", priority: "high", description: "Vote unsuccessful" });
         }
 
         setVotingLoading(false);
@@ -128,6 +140,16 @@ export default function CrossReferenceCard({
         }
         onCopy?.(reference);
     };
+
+    const arrowButtonColors = (vote: 1 | -1) => {
+
+        if (vote == 1) {
+
+            return referenceVote == 0 ? " text-stone-400 hover:text-stone-700 hover:bg-stone-200/80 ": (referenceVote == 1 )? " text-emerald-700 hover:bg-emerald-100 ": " text-stone-400 hover:text-stone-700 hover:bg-stone-200/80 ";
+        }
+        return referenceVote == 0 ? " text-stone-400 hover:text-stone-700 hover:bg-stone-200/80 ": (referenceVote == 1 )? " text-stone-400 hover:text-stone-700 hover:bg-stone-200/80 ": " text-rose-600 hover:bg-rose-100 ";
+
+    }
 
     const toHeading = `${reference.toBook} ${formatVerseRange(
         reference.toChapter,
@@ -159,28 +181,29 @@ export default function CrossReferenceCard({
 
 
                 </div>
-
+                {/*Voting buttons*/}
                 <div
-                    className={`h-7.5 gap-2 inline-flex items-center  border  rounded-lg overflow-hidden  border-gray-200 animate-in ${referenceVote === 0 ? "bg-gray-50" : referenceVote === 1 ? "bg-amber-500" : "bg-rose-50 border-rose-200"} `}>
+                    className={`h-7.5 gap-2 inline-flex items-center  rounded-lg  animate-in ${referenceVote === 0 ? "bg-white" : referenceVote === 1 ? " bg-emerald-50 border border-emerald-500" : " bg-rose-50 border border-rose-200 rounded-lg overflow-hidden shadow-2xs"} `}>
 
                     <button
                         onClick={() => handleVote(1)}
                         disabled={votingLoading}
-                        aria-label="Upvote" className="h-7.5 w-7.5 px-2 py-1 text-rose-600 hover:bg-rose-100 transition-colors"
+                        aria-label="Upvote" className={`h-6.5 w-6.5 px-2 py-1 rounded-tl-md rounded-bl-md  transition-colors ${arrowButtonColors(1)}`}
                             type="button">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path d="M5 15l7-7 7 7" strokeLinecap="round" strokeLinejoin="round"
                                   strokeWidth="2.5"></path>
                         </svg>
                     </button>
-                    <span className="py-1 text-xs font-bold text-gray-900">
-                        {reference.votes + userVote}
+                    <span className={`py-1 text-xs font-bold text-gray-900`}>
+                        {numberOfVotes}
                     </span>
                     <button aria-label="Downvote"
 
                                 onClick={() => handleVote(-1)}
-                                disabled={votingLoading || referenceVote === -1}
-                                className="px-2 py-1 h-7.5 w-7.5 text-rose-600 hover:bg-rose-50 transition-colors " type="button">
+                                disabled={votingLoading}
+                                className={`px-2 py-1 h-6.5 w-6.5 rounded-tr-md rounded-br-md ${arrowButtonColors(-1)} transition-colors font-bold `} type="button">
+
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round"
                                   strokeWidth="2.5"></path>
