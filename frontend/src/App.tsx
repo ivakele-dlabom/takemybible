@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
 import {VerseSelectionProvider} from "@/contexts/VerseSelectionContext.tsx";
+import {ModalProvider} from "@/contexts/ModalContext.tsx";
 
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -20,9 +21,12 @@ function AppRoutes() {
     const homePage = (
 
         <ProtectedRoute>
+
+            <ModalProvider>
             <BookNavigationProvider>
-                <Main />
+                    <Main />
             </BookNavigationProvider>
+            </ModalProvider>
         </ProtectedRoute>
     );
   return (

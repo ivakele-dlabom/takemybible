@@ -3,23 +3,36 @@ import {useVerseSelection} from "@/contexts/VerseSelectionContext.tsx";
 import type {CrossReference} from "@/types/main.ts";
 import {useBookNavigation} from "@/contexts/BookContext.tsx";
 import {Plus} from "lucide-react";
-import {SearchReference} from "@/components/main/comments/SearchReference.tsx";
-import {SortReferences} from "@/components/main/comments/SortReferences.tsx";
+import {SearchReference} from "@/components/main/references/SearchReference.tsx";
+import {SortReferences} from "@/components/main/references/SortReferences.tsx";
 import {useEffect, useRef, useState} from "react";
-import CrossReferenceCard from "@/components/main/comments/CrossReferenceCard.tsx";
+import CrossReferenceCard from "@/components/main/references/CrossReferenceCard.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { fromNumericToRoman } from "@/lib/utils";
 import {toast} from "@/components/ui/toast.tsx"
+import AddCrossReferenceModal, {type SourceVerse} from "@/components/main/references/AddCrossReferenceModal.tsx";
+import {useModal} from "@/contexts/ModalContext.tsx";
+import {useVerses} from "@/hooks/useVerse.ts";
 
 export default function CrossReferences() {
     const navigate = useNavigate();
     const {selectedVerseNumber, setSelectedVerseNumber, setSelectedVerseId} = useVerseSelection();
     const {crossReferences} = useCrossReferences(selectedVerseNumber);
     const { books, translation} = useBookNavigation();
+    const {crossReferenceModalOpen, setCrossReferenceModalOpen} = useModal();
     const { bookNumber, chapterNumber } = useParams<{ bookNumber: string; chapterNumber: string; verseNumber: string }>();
     const [sortValue, setSortValue] = useState("")
     const bookName = books[Number(bookNumber ?? 1)-1]?.name ?? "";
     const timer = useRef<number | undefined>(undefined);
+    const {data: verse} = useVerses();
+
+    const addReferenceSource:SourceVerse  ={
+        bookName: bookName,
+        chapterNumber: Number(chapterNumber),
+        verseNumber: selectedVerseNumber,
+        text: verse?.[selectedVerseNumber]?.text || "Verse not available",
+}
+
 
     const onOpenReference = (bookName: string, chN: number, vN: number) => {
         books.map((b) => console.log(b.name));
@@ -45,6 +58,10 @@ export default function CrossReferences() {
 
     useEffect(() => () => window.clearTimeout(timer.current), []);
 
+    function handleAddReference() {
+        setCrossReferenceModalOpen(true);
+    }
+
     return (
        <section  className={`p-4 h-130 w-140 font-geist  overflow-y-auto 
         transition-all
@@ -64,7 +81,9 @@ export default function CrossReferences() {
                   <span className={"text-gray-500 font-geist-mono text-xs"}>Showing {`${crossReferences.length}`} validated biblical connection</span>
               </div>
 
-              <button className={"flex flex-row gap-2 h-8 bg-black text-white rounded-sm border border-gray-300 p-2 hover:cursor-pointer"}>
+              <button
+                  onClick={handleAddReference}
+                  className={"flex flex-row gap-2 h-8 bg-black text-white rounded-sm border border-gray-300 p-2 hover:cursor-pointer"}>
                   <Plus className={"size-4 my-auto"}/>
                   <span className={"my-auto font-bold text-xs"}>Add Ref</span>
               </button>
@@ -81,6 +100,8 @@ export default function CrossReferences() {
                    <CrossReferenceCard onOpenReference={onOpenReference} key={index} id={index} reference={crossReference}/>
                )
            })}
+           <AddCrossReferenceModal isOpen={crossReferenceModalOpen}
+                                   source={addReferenceSource}/>
        </section>
     )
 }

@@ -36,6 +36,7 @@ const Main = () => {
         </select>
       </label>
         <Profile/>
+        
       <BookDisplay className="w-full" />
     </section>
   );

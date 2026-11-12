@@ -31,8 +31,6 @@ export const Chapter = ({ verses, onVerseSelect }: Props) => {
         [&::-webkit-scrollbar]:w-[2px] 
         [&::-webkit-scrollbar-track]:bg-gray-100 
         [&::-webkit-scrollbar-thumb]:bg-gray-400 
-        [&.is-scrolling::-webkit-scrollbar]:h-[8px]
-        [&.is-scrolling::-webkit-scrollbar]:w-[4px]
         ${scrolling ? "is-scrolling" : ""}
         flex flex-row`}>
             <VerseDisplay className="mt-4 flex-3" verses={verses} onVerseSelect={onVerseSelect} />

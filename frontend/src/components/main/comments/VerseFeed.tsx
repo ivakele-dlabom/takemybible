@@ -1,4 +1,4 @@
-import CrossReferences from "./CrossReferences";
+import CrossReferences from "../references/CrossReferences";
 
 interface Props {
 }
