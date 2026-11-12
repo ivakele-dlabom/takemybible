@@ -1,9 +1,13 @@
 
 import React, { useMemo, useState } from "react";
 import {
+    fetchData,
     getBibleSuggestions,
     parseBibleReference
 } from "@/lib/utils.ts";
+import {useBookNavigation} from "@/contexts/BookContext.tsx";
+import {BACKEND_BASE_URL} from "@/lib/constants.ts";
+import type {Verse} from "@/types/main.ts";
 
 interface Props {
     inputRef: React.RefObject<HTMLInputElement | null>;
@@ -20,20 +24,41 @@ export const SearchNextPassage = ({
                                   }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
+    const {books} = useBookNavigation();
 
     const suggestions = useMemo(
-        () => getBibleSuggestions(target),
+        () => getBibleSuggestions(target, books),
         [target]
     );
 
     const parsedReference = useMemo(
-        () => parseBibleReference(target),
+        () => parseBibleReference(target, books),
         [target]
     );
 
     const isValid = parsedReference.valid;
 
+    const findBookIdFromBookName = (bookName: string) => {
+        return books.map((book) => {
+            if (book.name.toLowerCase() === bookName.toLowerCase()) {
+                return book.id;
+            }
+        })[0] || 0;
+    }
+
+    async function verifySuggestion(value: string) {
+
+        const [bookName, chapterVerse] = value.split(" ")
+        const [ch, ver] = chapterVerse.split(":");
+        const bookId = findBookIdFromBookName(bookName)
+        const response = await fetchData<Verse>( `${BACKEND_BASE_URL}api/kjv/verses/${bookId}/${ch}/${ver}`)
+        if (response) {
+
+        }
+    }
+
     const selectSuggestion = (value: string) => {
+        verifySuggestion(value)
         setTarget(value);
         setActiveIndex(0);
         inputRef.current?.focus();

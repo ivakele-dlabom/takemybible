@@ -18,6 +18,13 @@ export interface Citation {
     verseNumber: number;
 }
 
+
+export interface Response<T> {
+  data: T;
+  error: boolean;
+  errorMessage: string;
+}
+
 export interface Book {
   id: number;
   name: string;

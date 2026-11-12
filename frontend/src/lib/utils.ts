@@ -1,6 +1,6 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { string } from "zod";
+import {type ClassValue, clsx} from "clsx"
+import {twMerge} from "tailwind-merge"
+import type {Book} from "@/types/main.ts";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -10,27 +10,16 @@ export function cn(...inputs: ClassValue[]) {
 
 type HttpMethod = "GET" | "HEAD" | "POST" | "PUT" | "DELETE";
 
-export async function fetchData<T>(
+export async function fetchData(
     url: string,
     method: HttpMethod = "GET",
     body?: unknown
-): Promise<T> {
-  const response = await fetch(url, {
-    method,
-    headers: body !== undefined ? { "Content-Type": "application/json" } : undefined,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
+): Promise<Response> {
+    return await fetch(url, {
+      method,
+      headers: body !== undefined ? {"Content-Type": "application/json"} : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
   });
-
-  if (!response.ok) {
-    throw new Error(`${method} ${url} failed: ${response.status} ${response.statusText}`);
-  }
-
-  // No content (e.g. 204 or HEAD), so there's nothing to parse
-  if (response.status === 204 || method === "HEAD") {
-    return undefined as T;
-  }
-
-  return response.json() as Promise<T>;
 }
 
 const ROMAN_MAP: [number, string][] = [
@@ -71,15 +60,9 @@ export function fromNumericToRoman(bookName: string) : string  {
 
 
 
-export type BibleBook = {
-    name: string;
-    abbreviation: string;
-    chapters: number[];
-    aliases?: string[];
-};
 
 export type BibleReference = {
-    book: BibleBook;
+    book: Book;
     chapter: number;
     verse?: number;
 };
@@ -96,279 +79,230 @@ export type ParsedReference = {
     error?: string;
 };
 
-const books = bibleBooks as BibleBook[];
+/**
+ * Optional lookups. Your Book type has no chapter/verse data, so supply these
+ * if you want chapter/verse suggestions and range validation.
+ */
+export type ScriptureCounts = {
+    chapterCount?: (bookId: number) => number | undefined;
+    verseCount?: (bookId: number, chapter: number) => number | undefined;
+};
 
-// Normalize names and abbreviations
-const normalize = (value: string) =>
+// ---------- Helpers ----------
+
+// "1.Cor", " 1  John " and "1john" all become "1 cor" / "1 john"
+export const normalize = (value: string) =>
     value
         .toLowerCase()
         .replace(/[.]/g, "")
+        .replace(/^(\d)(?=[a-z])/, "$1 ")
         .replace(/\s+/g, " ")
         .trim();
 
-// Levenshtein distance for fuzzy matching
 function levenshtein(a: string, b: string): number {
-    const matrix = Array.from(
-        { length: a.length + 1 },
-        (_, i) => [i, ...Array(b.length).fill(0)]
-    );
-
-    for (let j = 0; j <= b.length; j++) {
-        matrix[0][j] = j;
-    }
+    const m = Array.from({ length: a.length + 1 }, (_, i) => [
+        i,
+        ...Array(b.length).fill(0),
+    ]);
+    for (let j = 0; j <= b.length; j++) m[0][j] = j;
 
     for (let i = 1; i <= a.length; i++) {
         for (let j = 1; j <= b.length; j++) {
-            matrix[i][j] = Math.min(
-                matrix[i - 1][j] + 1,
-                matrix[i][j - 1] + 1,
-                matrix[i - 1][j - 1] +
-                (a[i - 1] === b[j - 1] ? 0 : 1)
+            m[i][j] = Math.min(
+                m[i - 1][j] + 1,
+                m[i][j - 1] + 1,
+                m[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
             );
         }
     }
-
-    return matrix[a.length][b.length];
+    return m[a.length][b.length];
 }
 
-// All names that can identify a book
-function getBookNames(book: BibleBook): string[] {
-    return [
-        book.name,
-        book.abbreviation,
-        ...(book.aliases ?? [])
-    ].map(normalize);
-}
+type IndexedBook = { book: Book; key: string };
 
-// Find a book using its name, abbreviation or fuzzy match
-export function findBook(query: string): BibleBook | undefined {
+const indexBooks = (books: Book[]): IndexedBook[] =>
+    books.map(book => ({ book, key: normalize(book.name) }));
+
+// ---------- Book matching ----------
+
+type BookMatch = { book: Book; rank: number; distance: number };
+// rank: 0 = exact, 1 = prefix, 2 = fuzzy
+
+export function matchBooks(
+    query: string,
+    books: Book[],
+    { fuzzy = true }: { fuzzy?: boolean } = {}
+): BookMatch[] {
     const search = normalize(query);
+    if (!search) return [];
 
-    if (!search) return undefined;
+    const results: BookMatch[] = [];
 
-    // Exact match
-    const exact = books.find(book =>
-        getBookNames(book).includes(search)
-    );
+    for (const { book, key } of indexBooks(books)) {
+        if (key === search) {
+            results.push({ book, rank: 0, distance: 0 });
+        } else if (key.startsWith(search)) {
+            results.push({ book, rank: 1, distance: key.length - search.length });
+        } else if (fuzzy && search.length >= 3) {
+            const distance = levenshtein(search, key);
+            const allowed = key.length <= 4 ? 1 : 2;
+            if (distance <= allowed) results.push({ book, rank: 2, distance });
+        }
+    }
 
-    if (exact) return exact;
-
-    // Prefix match
-    const prefix = books.find(book =>
-        getBookNames(book).some(name => name.startsWith(search))
-    );
-
-    if (prefix) return prefix;
-
-    // Fuzzy match
-    const matches = books
-        .map(book => ({
-            book,
-            score: Math.min(
-                ...getBookNames(book).map(name =>
-                    levenshtein(search, name)
-                )
-            )
-        }))
-        .filter(({ book, score }) => {
-            const shortest = Math.min(
-                ...getBookNames(book).map(name => name.length)
-            );
-
-            // Allow only reasonably close matches
-            return score <= (shortest <= 4 ? 1 : 2);
-        })
-        .sort((a, b) => a.score - b.score);
-
-    return matches[0]?.book;
+    return results.sort((a, b) => a.rank - b.rank || a.distance - b.distance);
 }
 
-// Resolve a book at the beginning of a reference.
-// Longest matching name wins, which handles "1 John", etc.
-function resolveBookPrefix(query: string) {
-    const normalized = normalize(query);
-
-    const candidates = books.flatMap(book =>
-        getBookNames(book).map(name => ({ book, name }))
-    );
-
-    candidates.sort((a, b) => b.name.length - a.name.length);
-
-    return candidates.find(({ name }) =>
-        normalized === name ||
-        normalized.startsWith(name + " ")
-    );
+// Best single guess (exact, then prefix, then fuzzy)
+export function findBook(query: string, books: Book[]): Book | undefined {
+    return matchBooks(query, books)[0]?.book;
 }
 
-// Validate a complete reference
+// Longest book name at the start of the text wins ("1 john" beats "john")
+function resolveBookPrefix(text: string, books: Book[]) {
+    const normalized = normalize(text);
+
+    return indexBooks(books)
+        .sort((a, b) => b.key.length - a.key.length)
+        .find(
+            ({ key }) => normalized === key || normalized.startsWith(key + " ")
+        );
+}
+
+// ---------- Parsing ----------
+
 export function parseBibleReference(
-    input: string
+    input: string,
+    books: Book[],
+    counts: ScriptureCounts = {}
 ): ParsedReference {
-    const value = input.trim();
-
-    const match = value.match(/^(.+?)\s+(\d+)(?::(\d+))?$/);
+    const match = normalize(input).match(/^(.+?)\s+(\d+)(?::(\d+))?$/);
 
     if (!match) {
-        return {
-            valid: false,
-            error: "Invalid reference format."
-        };
+        return { valid: false, error: "Invalid reference format." };
     }
 
     const [, bookQuery, chapterString, verseString] = match;
 
-    const book = findBook(bookQuery);
+    // Accept an exact name, or a prefix that points at exactly one book
+    const candidates = matchBooks(bookQuery, books, { fuzzy: false });
+    const exact = candidates.find(c => c.rank === 0);
+    const book =
+        exact?.book ?? (candidates.length === 1 ? candidates[0].book : undefined);
 
-    if (!book || normalize(bookQuery) !== normalize(book.name) &&
-        !getBookNames(book).includes(normalize(bookQuery))) {
-        return {
-            valid: false,
-            error: "Unknown Bible book."
-        };
+    if (!book) {
+        return { valid: false, error: "Unknown Bible book." };
     }
 
     const chapter = Number(chapterString);
+    const chapterTotal = counts.chapterCount?.(book.id);
 
-    if (
-        !Number.isInteger(chapter) ||
-        chapter < 1 ||
-        chapter > book.chapters.length
-    ) {
-        return {
-            valid: false,
-            error: `Invalid chapter for ${book.name}.`
-        };
+    if (chapter < 1 || (chapterTotal !== undefined && chapter > chapterTotal)) {
+        return { valid: false, error: `Invalid chapter for ${book.name}.` };
     }
 
     let verse: number | undefined;
 
     if (verseString !== undefined) {
         verse = Number(verseString);
+        const verseTotal = counts.verseCount?.(book.id, chapter);
 
-        if (
-            !Number.isInteger(verse) ||
-            verse < 1 ||
-            verse > book.chapters[chapter - 1]
-        ) {
+        if (verse < 1 || (verseTotal !== undefined && verse > verseTotal)) {
             return {
                 valid: false,
-                error: `Invalid verse. ${book.name} ${chapter} has ${book.chapters[chapter - 1]} verses.`
+                error:
+                    verseTotal !== undefined
+                        ? `Invalid verse. ${book.name} ${chapter} has ${verseTotal} verses.`
+                        : `Invalid verse for ${book.name} ${chapter}.`,
             };
         }
     }
 
-    return {
-        valid: true,
-        reference: {
-            book,
-            chapter,
-            verse
-        }
-    };
+    return { valid: true, reference: { book, chapter, verse } };
 }
 
-// Return the canonical representation of a valid reference
-export function formatBibleReference(
-    reference: BibleReference
-): string {
-    return `${reference.book.name} ${reference.chapter}${
-        reference.verse !== undefined
-            ? `:${reference.verse}`
-            : ""
-    }`;
+export function formatBibleReference({ book, chapter, verse }: BibleReference) {
+    return `${book.name} ${chapter}${verse !== undefined ? `:${verse}` : ""}`;
 }
 
-// Generate autocomplete suggestions
+// ---------- Suggestions ----------
+
+const range = (n: number) => Array.from({ length: n }, (_, i) => i + 1);
+
 export function getBibleSuggestions(
-    input: string
+    input: string,
+    books: Book[],
+    counts: ScriptureCounts = {}
 ): BibleSuggestion[] {
     const query = input.trimStart();
-
     if (!query) return [];
 
-    // Find a book prefix, including abbreviations and numbered books.
-    const resolved = resolveBookPrefix(query);
+    const resolved = resolveBookPrefix(query, books);
+    const book = resolved?.book;
+    const remainder = resolved
+        ? normalize(query).slice(resolved.key.length).trim()
+        : "";
 
-    if (!resolved) {
-        // Book suggestions
-        const search = normalize(query);
+    // Still typing the book name ("john" with no space or numbers yet)
+    if (!resolved || (!remainder && !/\s$/.test(query))) {
+        return matchBooks(query, books).map(({ book }) => ({
+            label: book.name,
+            value: `${book.name} `,
+            type: "BOOK" as const,
+        }));
+    }
 
-        return books
-            .map(book => {
-                const names = getBookNames(book);
+    // Book chosen, now the chapter
+    if (/^\d*$/.test(remainder)) {
+        const total = counts.chapterCount?.(book!.id);
 
-                const exactPrefix = names.some(name =>
-                    name.startsWith(search)
-                );
+        // No chapter data: just echo what was typed
+        if (total === undefined) {
+            return remainder
+                ? [
+                      {
+                          label: `${book!.name} ${remainder}`,
+                          value: `${book!.name} ${remainder}:`,
+                          type: "CHAPTER" as const,
+                      },
+                  ]
+                : [];
+        }
 
-                const fuzzyScore = Math.min(
-                    ...names.map(name => levenshtein(search, name))
-                );
-
-                return {
-                    book,
-                    exactPrefix,
-                    fuzzyScore
-                };
-            })
-            .filter(({ exactPrefix, fuzzyScore }) =>
-                exactPrefix || fuzzyScore <= 2
-            )
-            .sort((a, b) =>
-                Number(b.exactPrefix) - Number(a.exactPrefix) ||
-                a.fuzzyScore - b.fuzzyScore
-            )
-            .map(({ book }) => ({
-                label: book.name,
-                value: `${book.name} `,
-                type: "BOOK" as const
+        return range(total)
+            .filter(c => String(c).startsWith(remainder))
+            .map(c => ({
+                label: `${book!.name} ${c}`,
+                value: `${book!.name} ${c}:`,
+                type: "CHAPTER" as const,
             }));
     }
 
-    const { book, name } = resolved;
-    const remainder = normalize(query).slice(name.length).trim();
+    // Chapter chosen, now the verse
+    const m = remainder.match(/^(\d+):(\d*)$/);
+    if (!m) return [];
 
-    // Book selected, suggest chapters
-    if (!remainder || /^\d+$/.test(remainder)) {
-        const search = remainder;
+    const chapter = Number(m[1]);
+    const verseSearch = m[2];
+    const total = counts.verseCount?.(book!.id, chapter);
 
-        return book.chapters
-            .map((_, index) => index + 1)
-            .filter(chapter =>
-                String(chapter).startsWith(search)
-            )
-            .map(chapter => ({
-                label: `${book.name} ${chapter}`,
-                value: `${book.name} ${chapter}:`,
-                type: "CHAPTER" as const
-            }));
+    if (total === undefined) {
+        return verseSearch
+            ? [
+                  {
+                      label: `${book!.name} ${chapter}:${verseSearch}`,
+                      value: `${book!.name} ${chapter}:${verseSearch}`,
+                      type: "VERSE" as const,
+                  },
+              ]
+            : [];
     }
 
-    // Chapter selected, suggest verses
-    const match = remainder.match(/^(\d+):(\d*)$/);
-
-    if (match) {
-        const chapter = Number(match[1]);
-        const verseSearch = match[2];
-
-        const verseCount = book.chapters[chapter - 1];
-
-        if (!verseCount) return [];
-
-        return Array.from(
-            { length: verseCount },
-            (_, index) => index + 1
-        )
-            .filter(verse =>
-                String(verse).startsWith(verseSearch)
-            )
-            .map(verse => ({
-                label: `${book.name} ${chapter}:${verse}`,
-                value: `${book.name} ${chapter}:${verse}`,
-                type: "VERSE" as const
-            }));
-    }
-
-    return [];
+    return range(total)
+        .filter(v => String(v).startsWith(verseSearch))
+        .map(v => ({
+            label: `${book!.name} ${chapter}:${v}`,
+            value: `${book!.name} ${chapter}:${v}`,
+            type: "VERSE" as const,
+        }));
 }
-

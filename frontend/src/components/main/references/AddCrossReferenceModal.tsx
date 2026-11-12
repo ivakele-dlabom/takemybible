@@ -104,7 +104,7 @@ export default function AddCrossReferenceModal({
     const [customTag, setCustomTag] = useState("");
     const [note, setNote] = useState("");
     const [submitting, setSubmitting] = useState(false);
-    const {crossReferenceModalOpen, setCrossReferenceModalOpen} = useModal()
+    const {setCrossReferenceModalOpen} = useModal()
 
     const canSubmit = target.trim().length > 0 && !submitting;
 
@@ -114,6 +114,8 @@ export default function AddCrossReferenceModal({
     }
 
     function onSubmit(ref: NewCrossReference) {
+        const [bookName, chapterVerse] = ref.target.split(" ")
+        const [ch, ver] = chapterVerse.split(":");
 
     }
 
@@ -158,6 +160,7 @@ export default function AddCrossReferenceModal({
     const handleSubmit = async () => {
         if (!canSubmit) return;
         setSubmitting(true);
+
         try {
             await onSubmit({
                 target: target.trim(),

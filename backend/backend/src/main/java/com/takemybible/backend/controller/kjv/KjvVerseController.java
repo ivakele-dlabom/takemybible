@@ -38,4 +38,16 @@ public class KjvVerseController {
 
             return ResponseEntity.ok(verses);
             }
+
+    @GetMapping("/{bookId}/{chapter}/{verse}")
+public ResponseEntity<Verse> getVerse(
+        @PathVariable Integer bookId,
+        @PathVariable Integer chapter,
+        @PathVariable Integer verse
+) {
+    return verseRepository
+            .findByBookIdAndChapterAndVerse(bookId, chapter, verse)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+}
 }
