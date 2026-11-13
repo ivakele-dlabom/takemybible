@@ -17,7 +17,13 @@ export type ConnectionType =
     | "Theological Contrast"
     | "Historical Context";
 
-export type Strength = "Moderate" | "Strong" | "Universal";
+export type Strength = "MODERATE" | "STRONG" | "UNIVERSAL";
+
+export interface CrossReferenceWithExtras extends Omit<CrossReference, "id" | "userVote"> {
+    connectionType: string,
+    confidence : "MODERATE" | "STRONG" | "UNIVERSAL",
+    themeTags: string[]
+}
 
 export interface SourceVerse {
     /** e.g. "Genesis 1:1" */
@@ -68,7 +74,7 @@ const CONNECTION_TYPES: ConnectionType[] = [
     "Historical Context",
 ];
 
-const STRENGTHS: Strength[] = ["Moderate", "Strong", "Universal"];
+const STRENGTHS: Strength[] = ["MODERATE", "STRONG", "UNIVERSAL"];
 
 const DEFAULT_TAGS = ["Creation / Origin", "Sovereignty", "Parallel Phrasing", "Christological"];
 
@@ -105,7 +111,7 @@ export default function AddCrossReferenceModal({
     const [verseVerified, setVerseVerified] = useState(false);
     const [preview, setPreview] = useState<TargetPassage | null>(null);
     const [connectionType, setConnectionType] = useState<ConnectionType>(CONNECTION_TYPES[0]);
-    const [strength, setStrength] = useState<Strength>("Strong");
+    const [strength, setStrength] = useState<Strength>("STRONG");
     const [tags, setTags] = useState<string[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>(availableTags);
     const [addingTag, setAddingTag] = useState(false);
@@ -124,7 +130,7 @@ export default function AddCrossReferenceModal({
     async function onSubmit(ref: NewCrossReferenceData) {
         const [bookName, chapterVerse] = ref.target.split(" ")
         const [ch, ver] = chapterVerse.split(":");
-        const newCrossReference: Omit<CrossReference, "id" | "userVote"> = {
+        const newCrossReference: CrossReferenceWithExtras = {
             fromBook: source.bookName,
             fromChapter: source.chapterNumber,
             fromVerse: source.verseNumber,
@@ -134,6 +140,9 @@ export default function AddCrossReferenceModal({
             toVerseStart: Number(ver),
             toVerseEnd: Number(ver),
             votes: 0,
+            connectionType: ref.connectionType,
+            confidence: ref.strength,
+            themeTags: ref.tags,
         }
 
         try {
@@ -295,14 +304,14 @@ export default function AddCrossReferenceModal({
                 "
                 >
                     {/* Source verse */}
-                    <div className="rounded-xl bg-amber-50/60 border border-amber-200/80 p-3.5 flex items-start gap-3">
-                        <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-serif font-bold text-xs flex-none mt-0.5">
+                    <div className="rounded-xl bg-amber-50/60 border border-yellow-200/80 p-3.5 flex items-start gap-3">
+                        <div className="w-7 h-7 rounded-lg bg-yellow-100 text-amber-800 flex items-center justify-center font-serif font-bold text-xs flex-none mt-0.5">
                             {source.bookName.slice(0, 3)}
                         </div>
                         <div className="text-xs">
                             <div className="flex items-center gap-2 mb-0.5">
                                 <span className="font-bold font-geist text-stone-900 text-sm">{`${source.bookName} ${source.chapterNumber}:${source.verseNumber}`}</span>
-                                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-amber-200/60 text-amber-800 rounded font-sans">
+                                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-yellow-200/60 text-amber-800 rounded font-sans">
                   Source Verse
                 </span>
                             </div>
@@ -357,7 +366,7 @@ export default function AddCrossReferenceModal({
                                 id={`${titleId}-type`}
                                 value={connectionType}
                                 onChange={(e) => setConnectionType(e.target.value as ConnectionType)}
-                                className="w-full text-xs bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-stone-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
+                                className="w-full text-xs bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-stone-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-500"
                             >
                                 {CONNECTION_TYPES.map((type) => (
                                     <option key={type} value={type}>

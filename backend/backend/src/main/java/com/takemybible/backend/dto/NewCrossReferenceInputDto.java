@@ -1,5 +1,10 @@
 package com.takemybible.backend.dto;
 
+import com.takemybible.backend.entity.Confidence;
+import jakarta.persistence.Column;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 public record NewCrossReferenceInputDto(
 
         String fromBook,
@@ -10,6 +15,9 @@ public record NewCrossReferenceInputDto(
         Integer toVerseStart,
         Integer toVerseEnd,
         Integer toVerse,
-        Integer votes
+        Integer votes,
+        String connectionType,
+        Confidence confidence ,
+        String[] themeTags
 ) {
 }

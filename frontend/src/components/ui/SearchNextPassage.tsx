@@ -130,7 +130,7 @@ export const SearchNextPassage = ({
                 className={`w-full pl-9 pr-24 py-2 text-sm bg-stone-50 border rounded-lg text-stone-900 placeholder-stone-400 focus:bg-white focus:outline-none focus:ring-2 transition-colors ${
                     target.includes(":") && !isValid
                         ? "border-red-400 focus:ring-red-500/30"
-                        : "border-stone-200 focus:ring-amber-500/30 focus:border-amber-500"
+                        : "border-stone-200 focus:ring-yellow-500/30 focus:border-yellow-500"
                 }`}
             />
             <span className={`relative text-[0.5rem]  p-2 left-66 bottom-8  uppercase rounded-sm bg-green-100 text-green-600 ${verseVerified? "":"hidden"}`}>verified</span>
