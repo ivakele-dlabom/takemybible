@@ -17,7 +17,7 @@ import {useVerses} from "@/hooks/useVerse.ts";
 export default function CrossReferences() {
     const navigate = useNavigate();
     const {selectedVerseNumber, setSelectedVerseNumber, setSelectedVerseId} = useVerseSelection();
-    const {crossReferences} = useCrossReferences(selectedVerseNumber);
+    const {crossReferences, fetchCrossReferences} = useCrossReferences(selectedVerseNumber);
     const { books, translation} = useBookNavigation();
     const {crossReferenceModalOpen, setCrossReferenceModalOpen} = useModal();
     const { bookNumber, chapterNumber } = useParams<{ bookNumber: string; chapterNumber: string; verseNumber: string }>();
@@ -30,7 +30,7 @@ export default function CrossReferences() {
         bookName: bookName,
         chapterNumber: Number(chapterNumber),
         verseNumber: selectedVerseNumber,
-        text: verse?.[selectedVerseNumber]?.text || "Verse not available",
+        text: verse?.[selectedVerseNumber-1]?.text || "Verse not available",
 }
 
 
@@ -101,7 +101,7 @@ export default function CrossReferences() {
                )
            })}
            <AddCrossReferenceModal isOpen={crossReferenceModalOpen}
-                                   source={addReferenceSource}/>
+                                   source={addReferenceSource} refetchCrossReferences={fetchCrossReferences}/>
        </section>
     )
 }

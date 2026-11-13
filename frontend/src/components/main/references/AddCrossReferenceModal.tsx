@@ -1,6 +1,11 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import {useModal} from "@/contexts/ModalContext.tsx";
 import {SearchNextPassage} from "@/components/ui/SearchNextPassage.tsx";
+import {toast} from "@/components/ui/toast.tsx";
+import type {CrossReference} from "@/types/main.ts";
+import {fetchData} from "@/lib/utils.ts";
+import {BACKEND_BASE_URL} from "@/lib/constants.ts";
+import type {QueryObserverResult, RefetchOptions} from "@tanstack/react-query";
 
 /* ---------- Types ---------- */
 
@@ -32,7 +37,7 @@ export interface TargetPassage {
     caption?: string;
 }
 
-export interface NewCrossReference {
+export interface NewCrossReferenceData {
     target: string;
     connectionType: ConnectionType;
     strength: Strength;
@@ -43,6 +48,7 @@ export interface NewCrossReference {
 export interface AddCrossReferenceModalProps {
     isOpen: boolean;
     source: SourceVerse;
+    refetchCrossReferences: (options?: RefetchOptions) => Promise<QueryObserverResult<CrossReference[], Error>>,
     /**
      * Resolve typed input (e.g. "Revelation 4:11") to a passage preview.
      * Return null if it can't be found. Without this, no preview/verified badge is shown.
@@ -90,11 +96,13 @@ export default function AddCrossReferenceModal({
                                                    source,
                                                    lookupPassage,
                                                    availableTags = DEFAULT_TAGS,
+    refetchCrossReferences
                                                }: AddCrossReferenceModalProps) {
     const titleId = useId();
     const inputRef = useRef<HTMLInputElement>(null);
 
     const [target, setTarget] = useState("");
+    const [verseVerified, setVerseVerified] = useState(false);
     const [preview, setPreview] = useState<TargetPassage | null>(null);
     const [connectionType, setConnectionType] = useState<ConnectionType>(CONNECTION_TYPES[0]);
     const [strength, setStrength] = useState<Strength>("Strong");
@@ -106,16 +114,39 @@ export default function AddCrossReferenceModal({
     const [submitting, setSubmitting] = useState(false);
     const {setCrossReferenceModalOpen} = useModal()
 
-    const canSubmit = target.trim().length > 0 && !submitting;
+    const canSubmit = target.trim().length > 0 && !submitting && verseVerified;
 
     function onClose() {
         setCrossReferenceModalOpen(false);
 
     }
 
-    function onSubmit(ref: NewCrossReference) {
+    async function onSubmit(ref: NewCrossReferenceData) {
         const [bookName, chapterVerse] = ref.target.split(" ")
         const [ch, ver] = chapterVerse.split(":");
+        const newCrossReference: Omit<CrossReference, "id" | "userVote"> = {
+            fromBook: source.bookName,
+            fromChapter: source.chapterNumber,
+            fromVerse: source.verseNumber,
+            toBook: bookName,
+            toChapter: Number(ch),
+            toVerse: Number(ver),
+            toVerseStart: Number(ver),
+            toVerseEnd: Number(ver),
+            votes: 0,
+        }
+
+        try {
+            const response = await fetchData(`${BACKEND_BASE_URL}api/kjv/cross-references/new`, "POST", newCrossReference);
+
+            if (response.ok) {
+                toast.add({ type: "success", description: "Cross reference created"})
+                await refetchCrossReferences();
+            }
+        } catch (error) {
+
+            toast.add({type: "error", description: "Failed to create the cross reference" });
+        }
 
     }
 
@@ -290,7 +321,7 @@ export default function AddCrossReferenceModal({
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <SearchNextPassage inputRef={inputRef} setTarget={setTarget} titleId={titleId} target={target}/>
+                            <SearchNextPassage verseVerified={verseVerified} setVerseVerified={setVerseVerified} inputRef={inputRef} setTarget={setTarget} titleId={titleId} target={target}/>
                             {preview && (
                                 <span className="absolute right-2.5 top-2 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-500/20">
                   Verified

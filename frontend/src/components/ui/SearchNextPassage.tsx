@@ -7,24 +7,26 @@ import {
 } from "@/lib/utils.ts";
 import {useBookNavigation} from "@/contexts/BookContext.tsx";
 import {BACKEND_BASE_URL} from "@/lib/constants.ts";
-import type {Verse} from "@/types/main.ts";
 
 interface Props {
     inputRef: React.RefObject<HTMLInputElement | null>;
     setTarget: (value: React.SetStateAction<string>) => void;
     titleId: string;
     target: string;
+    verseVerified: boolean;
+    setVerseVerified: (value: boolean) => void;
 }
 
 export const SearchNextPassage = ({
                                       inputRef,
                                       setTarget,
                                       titleId,
-                                      target
+                                      target,
+                                      verseVerified,
+                                      setVerseVerified,
                                   }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
-    const [verseVerified, setVerseVerified] = useState(false);
     const {books} = useBookNavigation();
 
     const suggestions = useMemo(
@@ -48,14 +50,17 @@ export const SearchNextPassage = ({
     }
 
     async function verifySuggestion(value: string) {
+        console.log("Verify verse")
 
         const [bookName, chapterVerse] = value.split(" ")
         const [ch, ver] = chapterVerse.split(":");
-        const bookId = findBookIdFromBookName(bookName)
+        const bookId = findBookIdFromBookName(bookName) + 1;
         const response = await fetchData( `${BACKEND_BASE_URL}api/kjv/verses/${bookId}/${ch}/${ver}`)
         if (response.ok) {
-            const verse: Verse = response.json();
+            // const verse: Verse = response.json();
             setVerseVerified(true);
+
+        } else {
 
         }
     }
@@ -128,7 +133,7 @@ export const SearchNextPassage = ({
                         : "border-stone-200 focus:ring-amber-500/30 focus:border-amber-500"
                 }`}
             />
-            <span className={`relative text-[0.625rem]  p-2 left-66 bottom-8  uppercase rounded-md bg-green-100 text-green-600 ${verseVerified? "":"hidden"}`}>verified</span>
+            <span className={`relative text-[0.5rem]  p-2 left-66 bottom-8  uppercase rounded-sm bg-green-100 text-green-600 ${verseVerified? "":"hidden"}`}>verified</span>
             {isOpen && suggestions.length > 0 && (
                 <ul
                     id={`${titleId}-suggestions`}

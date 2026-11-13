@@ -1,6 +1,9 @@
 package com.takemybible.backend.controller.cross_reference;
 
 import com.takemybible.backend.dto.CrossReferenceDto;
+import com.takemybible.backend.dto.NewCrossReferenceInputDto;
+import com.takemybible.backend.service.CrossReferenceService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +18,15 @@ public class CrossReferenceController {
 
     
     private final CrossReferenceRepository crossReferenceRepository;
-    public CrossReferenceController(CrossReferenceRepository crossReferenceRepository) {
+    private final CrossReferenceService crossReferenceService;
+    public CrossReferenceController(CrossReferenceRepository crossReferenceRepository,  CrossReferenceService crossReferenceService) {
         this.crossReferenceRepository = crossReferenceRepository;
+        this.crossReferenceService = crossReferenceService;
+    }
+
+    @PostMapping("/new")
+    public ResponseEntity<CrossReference> newCrossReference(@RequestBody NewCrossReferenceInputDto newCrossReferenceInputDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(crossReferenceService.create(newCrossReferenceInputDto));
     }
 
     @GetMapping("/{bookName}/{chapterNumber}/{verse}")
